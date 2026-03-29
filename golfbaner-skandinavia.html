@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Norske Golfbaner</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-dark: #1a4a2e;
+      --green-mid: #2d7a4f;
+      --green-light: #e8f5e9;
+      --green-border: #c8e6c9;
+      --gold: #f5a623;
+      --gold-empty: #ddd;
+      --text: #2d3a2e;
+      --text-muted: #6a8a6c;
+      --card-bg: #fff;
+      --bg: #f0f4ee;
+      --played-bg: #e8f5e9;
+      --played-border: #2d7a4f;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+      color: white;
+      padding: 36px 24px 28px;
+      text-align: center;
+    }
+    header h1 { font-size: 2rem; margin-bottom: 6px; }
+    header p { opacity: 0.85; font-size: 0.95rem; }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      background: var(--green-dark);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .stat {
+      padding: 14px 32px;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-number { font-size: 1.6rem; font-weight: 800; color: #7fce9e; }
+    .stat-label { font-size: 0.72rem; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+
+    /* LAYOUT */
+    .page-body {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .sidebar-list { padding: 0; }
+
+    .sidebar-region-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 16px;
+      background: var(--green-dark);
+      color: white;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-region-header:hover { background: #1f5a38; }
+    .sidebar-region-arrow { font-size: 0.65rem; margin-right: 2px; flex-shrink: 0; }
+    .sidebar-region-name { flex: 1; }
+    .sidebar-region-count {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .sidebar-region-items { }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      font-size: 0.82rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-item:hover { background: var(--green-light); }
+    .sidebar-item.played {
+      color: var(--green-mid);
+      font-weight: 600;
+      border-left-color: var(--green-mid);
+    }
+    .sidebar-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green-border);
+      flex-shrink: 0;
+    }
+    .sidebar-item.played .sidebar-dot { background: var(--green-mid); }
+
+    /* COURSE GRID */
+    main { flex: 1; min-width: 0; }
+
+    .region-section { margin-bottom: 36px; }
+    .region-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--green-border);
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    /* COURSE CARD */
+    .course-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 2px solid transparent;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.2s, background 0.2s;
+      overflow: hidden;
+      position: relative;
+    }
+    .course-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.13); }
+    .course-card.played {
+      background: var(--played-bg);
+      border-color: var(--played-border);
+    }
+
+    .card-photo {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      display: block;
+    }
+    .card-photo-placeholder {
+      width: 100%;
+      height: 130px;
+      background: linear-gradient(135deg, #d4ead8, #b8d8be);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+    .card-photo-placeholder.played-placeholder {
+      background: linear-gradient(135deg, #a5d6a7, #81c784);
+    }
+
+    .card-body { padding: 14px; }
+
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .course-name { font-size: 0.95rem; font-weight: 700; color: var(--green-dark); flex: 1; }
+    .played-check {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--green-mid); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; flex-shrink: 0;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .course-card.played .played-check { opacity: 1; }
+
+    .course-location { font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 8px; }
+
+    .card-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+    .badge {
+      font-size: 0.72rem; padding: 2px 8px;
+      border-radius: 10px; font-weight: 600;
+    }
+    .badge-holes { background: #e8f5e9; color: #2e7d32; }
+    .badge-par { background: #e3f2fd; color: #1565c0; }
+    .badge-type { background: #fff3e0; color: #e65100; }
+
+    .best-score {
+      font-size: 0.78rem; font-weight: 700;
+      color: #b8860b; white-space: nowrap; flex-shrink: 0;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .tee-dot {
+      width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+    }
+
+    .tee-selector { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tee-btn {
+      padding: 5px 10px;
+      border: 2px solid var(--tee-color);
+      border-radius: 6px;
+      background: white;
+      color: var(--tee-color);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tee-btn:hover { background: var(--tee-color); color: white; }
+    .tee-btn.active { background: var(--tee-color); color: white; }
+
+    .card-rating { display: flex; gap: 2px; margin-bottom: 4px; }
+    .star { font-size: 1rem; color: var(--gold-empty); }
+    .star.filled { color: var(--gold); }
+
+    .card-note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-style: italic;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: white;
+      border-radius: 16px;
+      width: 100%; max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      transform: scale(0.95);
+      transition: transform 0.2s;
+    }
+    .modal-overlay.open .modal { transform: scale(1); }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+      color: white;
+      padding: 20px 24px;
+      border-radius: 16px 16px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .modal-header h2 { font-size: 1.1rem; }
+    .modal-header .location { font-size: 0.82rem; opacity: 0.8; margin-top: 2px; }
+    .modal-close {
+      background: rgba(255,255,255,0.2);
+      border: none; color: white;
+      width: 30px; height: 30px;
+      border-radius: 50%; cursor: pointer;
+      font-size: 1rem; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.35); }
+
+    .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+
+    .field-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    /* PLAYED TOGGLE */
+    .played-toggle {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 2px solid var(--green-border);
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .played-toggle.active {
+      background: var(--played-bg);
+      border-color: var(--played-border);
+    }
+    .toggle-switch {
+      width: 44px; height: 24px;
+      background: #ccc; border-radius: 12px;
+      position: relative; transition: background 0.2s; flex-shrink: 0;
+    }
+    .toggle-switch::after {
+      content: '';
+      position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      background: white; border-radius: 50%;
+      transition: left 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .played-toggle.active .toggle-switch { background: var(--green-mid); }
+    .played-toggle.active .toggle-switch::after { left: 23px; }
+    .toggle-label { font-weight: 600; color: var(--text); }
+
+    /* STAR RATING */
+    .star-rating { display: flex; gap: 6px; }
+    .star-rating .star {
+      font-size: 1.8rem; cursor: pointer;
+      transition: transform 0.1s, color 0.15s;
+    }
+    .star-rating .star:hover { transform: scale(1.2); }
+
+    /* DATE */
+    .date-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid var(--green-border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .date-input:focus { border-color: var(--green-mid); }
+
+    /* NOTES */
+    .notes-textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--green-border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: var(--text);
+      resize: vertical;
+      min-height: 90px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .notes-textarea:focus { border-color: var(--green-mid); }
+
+    /* PHOTO UPLOAD */
+    .photo-upload-area {
+      border: 2px dashed var(--green-border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-muted);
+    }
+    .photo-upload-area:hover { border-color: var(--green-mid); background: var(--green-light); }
+    .photo-upload-area .upload-icon { font-size: 2rem; margin-bottom: 6px; }
+    .photo-upload-area p { font-size: 0.85rem; }
+    #photo-input { display: none; }
+
+    .photos-preview {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+    }
+    .photo-thumb {
+      position: relative; width: 80px; height: 80px;
+    }
+    .photo-thumb img {
+      width: 80px; height: 80px;
+      object-fit: cover; border-radius: 8px;
+      border: 2px solid var(--green-border);
+    }
+    .photo-remove {
+      position: absolute; top: -6px; right: -6px;
+      width: 20px; height: 20px;
+      background: #e53935; color: white;
+      border: none; border-radius: 50%; cursor: pointer;
+      font-size: 0.7rem; display: flex; align-items: center; justify-content: center;
+    }
+
+    /* SAVE BTN */
+    .save-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--green-mid);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .save-btn:hover { background: var(--green-dark); }
+
+    /* PHOTO LIGHTBOX */
+    .lightbox {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      cursor: zoom-out;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
+
+    /* SUMMARY VIEW */
+    #summary-view { display: none; }
+    #summary-view.visible { display: block; }
+
+    .summary-heading {
+      font-size: 1.3rem; font-weight: 800; color: var(--green-dark);
+      margin-bottom: 20px;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .summary-card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--green-mid);
+    }
+    .summary-card-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 6px;
+    }
+    .summary-card-value {
+      font-size: 1.8rem; font-weight: 800; color: var(--green-dark);
+    }
+    .summary-card-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+    .summary-section-title {
+      font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--text-muted);
+      margin-bottom: 12px; margin-top: 24px;
+      padding-bottom: 6px; border-bottom: 2px solid var(--green-border);
+    }
+
+    .region-progress { margin-bottom: 10px; }
+    .region-progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.82rem; margin-bottom: 4px; color: var(--text);
+    }
+    .region-progress-bar {
+      height: 8px; background: var(--green-border); border-radius: 4px; overflow: hidden;
+    }
+    .region-progress-fill {
+      height: 100%; background: var(--green-mid); border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .top-courses-list { display: flex; flex-direction: column; gap: 8px; }
+    .top-course-item {
+      display: flex; align-items: center; gap: 12px;
+      background: white; border-radius: 10px; padding: 10px 14px;
+      box-shadow: var(--shadow); cursor: pointer;
+    }
+    .top-course-item:hover { background: var(--green-light); }
+    .top-course-stars { color: var(--gold); font-size: 0.85rem; }
+    .top-course-name { font-weight: 600; font-size: 0.9rem; color: var(--green-dark); flex: 1; }
+    .top-course-score { font-size: 0.78rem; font-weight: 700; color: #b8860b; }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      .stat { padding: 12px 16px; }
+      .stat-number { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⛳ Norske Golfbaner</h1>
+  <p>Hold oversikt over banene du har spilt – legg til bilder, notater og rangeringer</p>
+</header>
+
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-number" id="stat-played">0</div>
+    <div class="stat-label">Spilt</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number" id="stat-total">0</div>
+    <div class="stat-label">Totalt</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number" id="stat-pct">0%</div>
+    <div class="stat-label">Fullført</div>
+  </div>
+</div>
+
+<div class="page-body">
+  <aside class="sidebar">
+    <div class="sidebar-list" id="sidebar-list"></div>
+  </aside>
+  <main id="main">
+    <div id="summary-view"></div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="modal-title"></h2>
+        <div class="location" id="modal-location"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div>
+        <div class="played-toggle" id="played-toggle" onclick="togglePlayed()">
+          <div class="toggle-switch"></div>
+          <span class="toggle-label">Jeg har spilt denne banen</span>
+        </div>
+      </div>
+
+      <div id="played-fields" style="display:none; flex-direction:column; gap:20px;">
+
+        <div style="display:flex; gap:12px; align-items:flex-end;">
+          <div style="width:110px;">
+            <div class="field-label">Beste score</div>
+            <input type="number" class="date-input" id="modal-best-score" placeholder="f.eks. 82" min="50" max="150">
+          </div>
+          <div style="flex:1;">
+            <div class="field-label">Teeboks</div>
+            <div class="tee-selector" id="tee-selector">
+              <button class="tee-btn" data-tee="svart" style="--tee-color:#222;">Svart</button>
+              <button class="tee-btn" data-tee="blå" style="--tee-color:#1565c0;">Blå</button>
+              <button class="tee-btn" data-tee="gul" style="--tee-color:#f5a623;">Gul</button>
+              <button class="tee-btn" data-tee="rød" style="--tee-color:#c62828;">Rød</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="field-label">Rangering</div>
+          <div class="star-rating" id="star-rating">
+            <span class="star" data-val="1" onclick="setRating(1)">★</span>
+            <span class="star" data-val="2" onclick="setRating(2)">★</span>
+            <span class="star" data-val="3" onclick="setRating(3)">★</span>
+            <span class="star" data-val="4" onclick="setRating(4)">★</span>
+            <span class="star" data-val="5" onclick="setRating(5)">★</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="field-label">Notat om opplevelsen</div>
+          <textarea class="notes-textarea" id="modal-notes" placeholder="Hvordan var banen? Hva husker du best?"></textarea>
+        </div>
+
+        <div>
+          <div class="field-label">Bilder</div>
+          <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()">
+            <div class="upload-icon">📷</div>
+            <p>Trykk for å legge til bilder fra dagen</p>
+          </div>
+          <input type="file" id="photo-input" accept="image/*" multiple onchange="handlePhotos(event)">
+          <div class="photos-preview" id="photos-preview"></div>
+        </div>
+
+      </div>
+
+      <button class="save-btn" onclick="saveEntry()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+const COURSES = [
+  // Oslo
+  { id: 'oslo-gk', name: 'Oslo Golfklubb', location: 'Bogstad, Oslo', region: 'Østlandet', holes: 18, par: 71, type: 'Parkbane', image: 'https://cdn.prod.website-files.com/65301339276f81da3e8a5a69/656dae76c136a1f6a91f2b24_448_Oslo_GK_16BITS_fm.jpg', tees: [
+    { label: '6100m', color: '#111' },
+    { label: '5800m', color: '#1565c0' },
+    { label: '5400m', color: '#f5a623' },
+    { label: '4900m', color: '#2e7d32' },
+    { label: '4500m', color: '#c62828' },
+    { label: '4100m', color: '#ad1457' },
+  ]},
+  { id: 'groruddalen', name: 'Groruddalen Golfklubb', location: 'Groruddalen, Oslo', region: 'Østlandet', holes: 9, par: 35, type: 'Skogsbane' },
+  { id: 'gronmo', name: 'Grønmo Golfklubb', location: 'Oslo', region: 'Østlandet', holes: 18, par: 72, type: 'Skogsbane' },
+  { id: 'ostmarka', name: 'Østmarka Golfklubb', location: 'Oslo', region: 'Østlandet', holes: 9, par: 35, type: 'Skogsbane' },
+  { id: 'lommedalen', name: 'Lommedalen Golfklubb', location: 'Lommedalen, Bærum', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  // Akershus
+  { id: 'asker', name: 'Asker Golfklubb', location: 'Asker', region: 'Østlandet', holes: 18, par: 71, type: 'Parkbane' },
+  { id: 'ballerud', name: 'Ballerud Golfklubb', location: 'Bekkestua, Bærum', region: 'Østlandet', holes: 9, par: 36, type: 'Parkbane' },
+  { id: 'baerumsmarka', name: 'Bærum Golfklubb', location: 'Bærum', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'drobak', name: 'Drøbak Golfklubb', location: 'Drøbak, Frogn', region: 'Østlandet', holes: 9, par: 36, type: 'Parkbane' },
+  { id: 'fet', name: 'Fet Golfklubb', location: 'Fetsund, Lillestrøm', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'gjerdrum', name: 'Gjerdrum Golfklubb', location: 'Gjerdrum, Akershus', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'gjersjoen', name: 'Gjersjøen Golfklubb', location: 'Oppegård, Akershus', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'grini', name: 'Grini Golfklubb', location: 'Gjettum, Bærum', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'haga', name: 'Haga Golfklubb', location: 'Bekkestua, Bærum', region: 'Østlandet', holes: 27, par: 72, type: 'Parkbane', image: 'https://hagagolf.no/files/images/archive/full/7997_haga_golf_photo_jacob_sjoman_20230905142115_0501_bigsize_3x2_formatcopy_1.jpg' },
+  { id: 'hakadal', name: 'Hakadal Golfklubb', location: 'Hakadal, Nittedal', region: 'Østlandet', holes: 18, par: 72, type: 'Skogsbane' },
+  { id: 'hauger', name: 'Hauger Golfklubb', location: 'Bærum', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'hvam', name: 'Hvam Golfklubb', location: 'Nittedal', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'hoken', name: 'Høken Golfklubb', location: 'Akershus', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'kjekstad', name: 'Kjekstad Golfklubb', location: 'Røyken, Asker', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'krokhol', name: 'Krokhol Golfklubb', location: 'Sørum, Lillestrøm', region: 'Østlandet', holes: 18, par: 72, type: 'Skogsbane' },
+  { id: 'lillestrom', name: 'Lillestrøm Golfklubb', location: 'Lillestrøm, Akershus', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'losby', name: 'Losby Golfklubb', location: 'Finstadjordet, Lørenskog', region: 'Østlandet', holes: 27, par: 72, type: 'Parkbane' },
+  { id: 'miklagard', name: 'Miklagard Golfklubb', location: 'Kløfta, Ullensaker', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane', image: 'https://miklagardgolf.no/files/images/archive/full/dji_0521-red.jpg', tees: [
+    { label: 'I', color: '#111' },
+    { label: 'II', color: '#1565c0' },
+    { label: 'III', color: '#2e7d32' },
+    { label: 'IV', color: '#f5a623' },
+    { label: 'V', color: '#c62828' },
+  ]},
+  { id: 'nes', name: 'Nes Golfklubb', location: 'Nes, Akershus', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'oppegard', name: 'Oppegård Golfklubb', location: 'Kolbotn, Nordre Follo', region: 'Østlandet', holes: 18, par: 70, type: 'Parkbane' },
+  { id: 'oustoen', name: 'Oustøen Country Club', location: 'Oustøen, Fredrikstad', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'romerike', name: 'Romerike Golfklubb', location: 'Romerike, Akershus', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'ski', name: 'Ski Golfklubb', location: 'Ski, Nordre Follo', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'sorknes', name: 'Sorknes Golfklubb', location: 'Eidsvoll, Akershus', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'ullensaker', name: 'Ullensaker Golfklubb', location: 'Jessheim, Ullensaker', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  // Østfold
+  { id: 'askim', name: 'Askim Golfklubb', location: 'Askim, Indre Østfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'borregaard', name: 'Borregaard Golfklubb', location: 'Sarpsborg, Østfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'gamle-fredrikstad', name: 'Gamle Fredrikstad Golfklubb', location: 'Fredrikstad, Østfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'halden', name: 'Halden Golfklubb', location: 'Halden, Østfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'holtsmark', name: 'Holtsmark Golfklubb', location: 'Østfold', region: 'Østlandet', holes: 9, par: 35, type: 'Parkbane' },
+  { id: 'huseby-hanko', name: 'Huseby & Hankø Golfklubb', location: 'Fredrikstad, Østfold', region: 'Østlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'hvaler', name: 'Hvaler Golfklubb', location: 'Hvaler, Østfold', region: 'Østlandet', holes: 9, par: 36, type: 'Kystbane' },
+  { id: 'rygge', name: 'Moss & Rygge Golfklubb', location: 'Moss, Østfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'mork', name: 'Mørk Golfklubb', location: 'Rakkestad, Østfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'onsoy', name: 'Onsøy Golfklubb', location: 'Fredrikstad, Østfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'skjeberg', name: 'Skjeberg Golfklubb', location: 'Sarpsborg, Østfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'soon', name: 'Soon Golfklubb', location: 'Moss, Østfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  // Buskerud
+  { id: 'drammen', name: 'Drammen Golfklubb', location: 'Drammen, Viken', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'eiker', name: 'Eiker Golfklubb', location: 'Øvre Eiker, Viken', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'hallingdal', name: 'Hallingdal Golfklubb', location: 'Ål, Hallingdal', region: 'Østlandet', holes: 9, par: 36, type: 'Fjellbane' },
+  { id: 'hemsedal', name: 'Hemsedal Golfklubb', location: 'Hemsedal, Viken', region: 'Østlandet', holes: 9, par: 35, type: 'Fjellbane' },
+  { id: 'kongsberg', name: 'Kongsberg Golfklubb', location: 'Kongsberg, Numedal', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'nesbyen', name: 'Nesbyen Golfklubb', location: 'Nesbyen, Hallingdal', region: 'Østlandet', holes: 9, par: 35, type: 'Fjellbane' },
+  { id: 'norefjell', name: 'Norefjell Golfklubb', location: 'Krødsherad, Viken', region: 'Østlandet', holes: 9, par: 35, type: 'Fjellbane' },
+  { id: 'ringerike', name: 'Ringerike Golfklubb', location: 'Hønefoss, Viken', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'tyrifjord', name: 'Tyrifjord Golfklubb', location: 'Ringerike, Viken', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  // Vestfold
+  { id: 'borre', name: 'Borre Golfklubb', location: 'Horten, Vestfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'hof', name: 'Hof Golfklubb', location: 'Hof, Vestfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'larvik', name: 'Larvik Golfklubb', location: 'Larvik, Vestfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'notteroy', name: 'Nøtterøy Golfklubb', location: 'Nøtterøy, Færder', region: 'Østlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'sande', name: 'Sande Golfklubb', location: 'Sande, Vestfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'sandefjord', name: 'Sandefjord Golfklubb', location: 'Sandefjord, Vestfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'tjome', name: 'Tjøme Golfklubb', location: 'Tjøme, Færder', region: 'Østlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'tonsberg', name: 'Tønsberg Golfklubb', location: 'Tønsberg, Vestfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'vestfold', name: 'Vestfold Golfklubb', location: 'Stokke, Vestfold', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  // Telemark
+  { id: 'bamble', name: 'Bamble Golfklubb', location: 'Bamble, Telemark', region: 'Østlandet', holes: 9, par: 35, type: 'Kystbane' },
+  { id: 'grenland', name: 'Grenland og Omegn Golfklubb', location: 'Skien, Telemark', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'kragero', name: 'Kragerø Golfklubb', location: 'Kragerø, Telemark', region: 'Østlandet', holes: 9, par: 36, type: 'Kystbane' },
+  { id: 'norsjø', name: 'Norsjø Golfklubb', location: 'Telemark', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'rjukan', name: 'Rjukan Golfklubb', location: 'Rjukan, Telemark', region: 'Østlandet', holes: 9, par: 35, type: 'Fjellbane' },
+  { id: 'solum', name: 'Solum Golfklubb', location: 'Skien, Telemark', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'vradal', name: 'Vrådal Golfklubb', location: 'Kviteseid, Telemark', region: 'Østlandet', holes: 9, par: 35, type: 'Parkbane' },
+  // Innlandet
+  { id: 'hedmarken', name: 'Atlungstad Golfklubb', location: 'Ottestad, Innlandet', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane', image: 'https://atlungstadgolf.no/wp-content/uploads/2024/02/Forsidebilde-cropped.jpeg' },
+  { id: 'elverum', name: 'Elverum Golfklubb', location: 'Elverum, Innlandet', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'gjovik-toten', name: 'Gjøvik og Toten Golfklubb', location: 'Gjøvik, Innlandet', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'hafjell', name: 'Hafjell Golfklubb', location: 'Øyer, Innlandet', region: 'Østlandet', holes: 18, par: 72, type: 'Fjellbane' },
+  { id: 'kongsvinger', name: 'Kongsvingers Golfklubb', location: 'Kongsvinger, Innlandet', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'mjosen', name: 'Mjøsen Golfklubb', location: 'Innlandet', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'randsfjorden', name: 'Randsfjorden Golfklubb', location: 'Nordre Land, Innlandet', region: 'Østlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'trysil', name: 'Trysil Golfklubb', location: 'Trysil, Innlandet', region: 'Østlandet', holes: 18, par: 72, type: 'Fjellbane' },
+  { id: 'valdres', name: 'Valdres Golfklubb', location: 'Aurdal, Valdres', region: 'Østlandet', holes: 9, par: 73, type: 'Fjellbane', image: 'https://valdresgolf.no/media/0jqfg3ot/valdres-golf-bane-oversikt-okt.jpg' },
+  // Vestlandet – Rogaland
+  { id: 'stavanger', name: 'Stavanger Golfklubb', location: 'Stavanger, Rogaland', region: 'Vestlandet', holes: 18, par: 70, type: 'Parkbane' },
+  { id: 'sandnes', name: 'Sandnes Golfklubb', location: 'Sandnes, Rogaland', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'sola', name: 'Sola Golfklubb', location: 'Sola, Rogaland', region: 'Vestlandet', holes: 18, par: 72, type: 'Linksbane' },
+  { id: 'jæren', name: 'Jæren Golfklubb', location: 'Time, Rogaland', region: 'Vestlandet', holes: 18, par: 72, type: 'Linksbane' },
+  { id: 'haugaland', name: 'Haugaland Golfklubb', location: 'Karmøy, Rogaland', region: 'Vestlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'haugesund', name: 'Haugesund Golfklubb', location: 'Haugesund, Rogaland', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'karmøy', name: 'Karmøy Golfklubb', location: 'Karmøy, Rogaland', region: 'Vestlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'nordvegen', name: 'Nordvegen Golfklubb', location: 'Karmøy, Rogaland', region: 'Vestlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'dalane', name: 'Dalane Golfklubb', location: 'Eigersund, Rogaland', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'egersund', name: 'Egersund Golfklubb', location: 'Egersund, Rogaland', region: 'Vestlandet', holes: 9, par: 36, type: 'Kystbane' },
+  { id: 'ogna', name: 'Ogna Golfklubb', location: 'Hå, Rogaland', region: 'Vestlandet', holes: 9, par: 35, type: 'Linksbane' },
+  { id: 'randaberg', name: 'Randaberg Golfklubb', location: 'Randaberg, Rogaland', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'preikestolen', name: 'Preikestolen Golfklubb', location: 'Sandnes, Rogaland', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'sauda', name: 'Sauda Golfklubb', location: 'Sauda, Rogaland', region: 'Vestlandet', holes: 9, par: 35, type: 'Fjellbane' },
+  // Vestlandet – Vestland
+  { id: 'bergen', name: 'Bergen Golfklubb', location: 'Bergen, Vestland', region: 'Vestlandet', holes: 18, par: 70, type: 'Parkbane' },
+  { id: 'fana', name: 'Fana Golfklubb', location: 'Bergen, Vestland', region: 'Vestlandet', holes: 18, par: 71, type: 'Parkbane' },
+  { id: 'meland', name: 'Meland Golfklubb', location: 'Meland, Vestland', region: 'Vestlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'bjørnefjorden', name: 'Bjørnefjorden Golfklubb', location: 'Os, Vestland', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'sotra', name: 'Sotra Golfklubb', location: 'Fjell, Vestland', region: 'Vestlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'herdla', name: 'Herdla Golfklubb', location: 'Askøy, Vestland', region: 'Vestlandet', holes: 9, par: 36, type: 'Kystbane' },
+  { id: 'hardanger', name: 'Hardanger Golfklubb', location: 'Kvam, Vestland', region: 'Vestlandet', holes: 9, par: 35, type: 'Fjellbane' },
+  { id: 'odda', name: 'Odda Golfklubb', location: 'Odda, Vestland', region: 'Vestlandet', holes: 9, par: 35, type: 'Fjellbane' },
+  { id: 'voss', name: 'Voss Golfklubb', location: 'Voss, Vestland', region: 'Vestlandet', holes: 18, par: 72, type: 'Fjellbane' },
+  { id: 'stord', name: 'Stord Golfklubb', location: 'Stord, Vestland', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'tysnes', name: 'Tysnes Golfklubb', location: 'Tysnes, Vestland', region: 'Vestlandet', holes: 9, par: 36, type: 'Kystbane' },
+  { id: 'kvinnherad', name: 'Kvinnherad Golfklubb', location: 'Rosendal, Vestland', region: 'Vestlandet', holes: 9, par: 35, type: 'Parkbane' },
+  { id: 'floro', name: 'Florø Golfklubb', location: 'Florø, Vestland', region: 'Vestlandet', holes: 9, par: 36, type: 'Kystbane' },
+  { id: 'sunnfjord', name: 'Sunnfjord Golfklubb', location: 'Førde, Vestland', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'nordfjord', name: 'Nordfjord Golfklubb', location: 'Nordfjordeid, Vestland', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'skei', name: 'Skei Golfklubb', location: 'Skei i Jølster, Vestland', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'laerdal', name: 'Lærdal Golfklubb', location: 'Lærdal, Vestland', region: 'Vestlandet', holes: 9, par: 35, type: 'Parkbane' },
+  { id: 'selje', name: 'Selje Golfklubb', location: 'Selje, Vestland', region: 'Vestlandet', holes: 9, par: 35, type: 'Kystbane' },
+  // Vestlandet – Møre og Romsdal
+  { id: 'alesund', name: 'Ålesund Golfklubb', location: 'Ålesund, Møre og Romsdal', region: 'Vestlandet', holes: 18, par: 71, type: 'Kystbane' },
+  { id: 'sunnmore', name: 'Sunnmøre Golfklubb', location: 'Ålesund, Møre og Romsdal', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'giske', name: 'Giske Golfklubb', location: 'Giske, Møre og Romsdal', region: 'Vestlandet', holes: 9, par: 36, type: 'Kystbane' },
+  { id: 'nordhaug', name: 'Nordhaug Golfklubb', location: 'Ålesund, Møre og Romsdal', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'molde', name: 'Molde Golfklubb', location: 'Molde, Møre og Romsdal', region: 'Vestlandet', holes: 18, par: 72, type: 'Fjordbane' },
+  { id: 'kristiansund', name: 'Kristiansund og Omegn Golfklubb', location: 'Kristiansund, Møre og Romsdal', region: 'Vestlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'rauma', name: 'Rauma Golfklubb', location: 'Åndalsnes, Møre og Romsdal', region: 'Vestlandet', holes: 18, par: 72, type: 'Fjellbane' },
+  { id: 'trollstigen', name: 'Trollstigen & Geirangerfjorden Golfklubb', location: 'Rauma, Møre og Romsdal', region: 'Vestlandet', holes: 9, par: 35, type: 'Fjellbane' },
+  { id: 'stranda', name: 'Stranda Golfklubb', location: 'Stranda, Møre og Romsdal', region: 'Vestlandet', holes: 9, par: 35, type: 'Fjordane' },
+  { id: 'volda', name: 'Volda Golfklubb', location: 'Volda, Møre og Romsdal', region: 'Vestlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'vanylven', name: 'Vanylven Golfklubb', location: 'Vanylven, Møre og Romsdal', region: 'Vestlandet', holes: 9, par: 35, type: 'Kystbane' },
+  { id: 'sunndal', name: 'Sunndal Golfklubb', location: 'Sunndalsøra, Møre og Romsdal', region: 'Vestlandet', holes: 18, par: 72, type: 'Fjellbane' },
+  { id: 'surnadal', name: 'Surnadal Golfklubb', location: 'Surnadal, Møre og Romsdal', region: 'Vestlandet', holes: 9, par: 35, type: 'Parkbane' },
+  { id: 'tingvoll', name: 'Tingvoll Golfklubb', location: 'Tingvoll, Møre og Romsdal', region: 'Vestlandet', holes: 9, par: 35, type: 'Parkbane' },
+  { id: 'smola', name: 'Smøla Golfklubb', location: 'Smøla, Møre og Romsdal', region: 'Vestlandet', holes: 9, par: 36, type: 'Kystbane' },
+  // Sørlandet
+  { id: 'arendal', name: 'Arendal og Omegn Golfklubb', location: 'Arendal, Agder', region: 'Sørlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'bjaavann', name: 'Bjaavann Golfklubb', location: 'Kristiansand, Agder', region: 'Sørlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'grimstad', name: 'Grimstad Golfklubb', location: 'Grimstad, Agder', region: 'Sørlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'hovden', name: 'Hovden Golfklubb', location: 'Hovden, Agder', region: 'Sørlandet', holes: 9, par: 35, type: 'Fjellbane' },
+  { id: 'kristiansand', name: 'Kristiansand Golfklubb', location: 'Kristiansand, Agder', region: 'Sørlandet', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'mandal', name: 'Mandal Golfklubb', location: 'Mandal, Agder', region: 'Sørlandet', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'sirdal', name: 'Sirdal Fjellgolf Klubb', location: 'Sirdal, Agder', region: 'Sørlandet', holes: 9, par: 35, type: 'Fjellbane' },
+  { id: 'utsikten', name: 'Utsikten Golfklubb', location: 'Kvinesdal, Agder', region: 'Sørlandet', holes: 18, par: 72, type: 'Parkbane' },
+  // Trøndelag
+  { id: 'trondheim', name: 'Trondheim Golfklubb', location: 'Trondheim', region: 'Trøndelag', holes: 18, par: 71, type: 'Parkbane' },
+  { id: 'byneset', name: 'Byneset Golfklubb', location: 'Trondheim', region: 'Trøndelag', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'klaebu', name: 'Klæbu Golfklubb', location: 'Klæbu, Trondheim', region: 'Trøndelag', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'austratt', name: 'Austrått Golfklubb', location: 'Ørland, Trøndelag', region: 'Trøndelag', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'hitra-froya', name: 'Hitra Frøya Golfklubb', location: 'Hitra, Trøndelag', region: 'Trøndelag', holes: 9, par: 36, type: 'Kystbane' },
+  { id: 'stjordal', name: 'Stjørdal Golfklubb', location: 'Stjørdal, Trøndelag', region: 'Trøndelag', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'steinkjer', name: 'Steinkjer Golfklubb', location: 'Steinkjer, Trøndelag', region: 'Trøndelag', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'stiklestad', name: 'Stiklestad Golfklubb', location: 'Verdal, Trøndelag', region: 'Trøndelag', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'namdal', name: 'Namdal Golfklubb', location: 'Namsos, Trøndelag', region: 'Trøndelag', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'namsos', name: 'Namsos Golfklubb', location: 'Namsos, Trøndelag', region: 'Trøndelag', holes: 9, par: 36, type: 'Parkbane' },
+  { id: 'roros', name: 'Røros Golfklubb', location: 'Røros, Trøndelag', region: 'Trøndelag', holes: 18, par: 72, type: 'Fjellbane' },
+  // Nord-Norge
+  { id: 'helgeland', name: 'Helgeland Golfklubb', location: 'Mo i Rana, Nordland', region: 'Nord-Norge', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'polarsirkelen', name: 'Polarsirkelen Golfklubb', location: 'Mo i Rana, Nordland', region: 'Nord-Norge', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'lofoten', name: 'Lofoten Golfklubb', location: 'Svolvær, Nordland', region: 'Nord-Norge', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'vesteralen', name: 'Vesterålen Golfklubb', location: 'Hadsel, Nordland', region: 'Nord-Norge', holes: 9, par: 36, type: 'Kystbane' },
+  { id: 'salten', name: 'Salten Golfklubb', location: 'Bodø, Nordland', region: 'Nord-Norge', holes: 18, par: 72, type: 'Parkbane' },
+  { id: 'bodo', name: 'Bodø Golfklubb', location: 'Bodø, Nordland', region: 'Nord-Norge', holes: 18, par: 71, type: 'Kystbane' },
+  { id: 'narvik', name: 'Narvik Golfklubb', location: 'Narvik, Nordland', region: 'Nord-Norge', holes: 9, par: 35, type: 'Fjellbane' },
+  { id: 'harstad', name: 'Harstad Golfklubb', location: 'Harstad, Troms', region: 'Nord-Norge', holes: 18, par: 72, type: 'Kystbane' },
+  { id: 'midt-troms', name: 'Midt-Troms Golfklubb', location: 'Troms', region: 'Nord-Norge', holes: 9, par: 36, type: 'Parkbane' },
+  { id: 'tromso', name: 'Tromsø Golfklubb', location: 'Tromsø, Troms', region: 'Nord-Norge', holes: 9, par: 36, type: 'Kystbane' },
+  { id: 'alta', name: 'Alta Golfklubb', location: 'Alta, Finnmark', region: 'Nord-Norge', holes: 9, par: 35, type: 'Parkbane' },
+  { id: 'hammerfest', name: 'Hammerfest Golfklubb', location: 'Hammerfest, Finnmark', region: 'Nord-Norge', holes: 9, par: 34, type: 'Kystbane' },
+  { id: 'north-cape', name: 'North Cape Golf Club', location: 'Nordkapp, Finnmark', region: 'Nord-Norge', holes: 18, par: 72, type: 'Arktisk' },
+  { id: 'karasjok', name: 'Karasjok Golfklubb', location: 'Karasjok, Finnmark', region: 'Nord-Norge', holes: 9, par: 36, type: 'Parkbane' },
+  { id: 'varanger', name: 'Varanger Golfklubb', location: 'Vadsø, Finnmark', region: 'Nord-Norge', holes: 9, par: 36, type: 'Arktisk' },
+  { id: 'longyearbyen', name: 'Longyearbyen Golfklubb', location: 'Longyearbyen, Svalbard', region: 'Nord-Norge', holes: 9, par: 36, type: 'Arktisk' },
+];
+
+// Persist data
+function loadData() {
+  try { return JSON.parse(localStorage.getItem('golf_entries') || '{}'); } catch { return {}; }
+}
+function saveData(data) {
+  localStorage.setItem('golf_entries', JSON.stringify(data));
+}
+
+let data = loadData();
+let currentId = null;
+let activeRegionSlug = null;
+let currentRating = 0;
+let currentPhotos = [];
+let currentTee = null;
+
+const DEFAULT_TEES = [
+  { label: 'Svart', color: '#222' },
+  { label: 'Blå',   color: '#1565c0' },
+  { label: 'Gul',   color: '#f5a623' },
+  { label: 'Rød',   color: '#c62828' },
+];
+
+function teeColor(teeLabel, courseId) {
+  const course = COURSES.find(c => c.id === courseId);
+  const tees = course?.tees || DEFAULT_TEES;
+  return tees.find(t => t.label === teeLabel)?.color || '#aaa';
+}
+
+// Build UI
+function getRegions() {
+  return [...new Set(COURSES.map(c => c.region))];
+}
+
+
+function buildCourses() {
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+  REGION_ORDER.filter(r => COURSES.some(c => c.region === r)).forEach(region => {
+    const section = document.createElement('div');
+    section.className = 'region-section';
+    section.dataset.region = region;
+    section.id = 'section-' + regionSlug(region);
+    section.innerHTML = `<div class="region-title">${region}</div>`;
+    const grid = document.createElement('div');
+    grid.className = 'courses-grid';
+    COURSES.filter(c => c.region === region).forEach(c => {
+      grid.appendChild(buildCard(c));
+    });
+    section.appendChild(grid);
+    main.appendChild(section);
+  });
+}
+
+function buildCard(course) {
+  const entry = data[course.id] || {};
+  const played = entry.played || false;
+  const card = document.createElement('div');
+  card.className = 'course-card' + (played ? ' played' : '');
+  card.id = 'card-' + course.id;
+  card.onclick = () => openModal(course.id);
+
+  const firstPhoto = entry.photos && entry.photos.length > 0 ? entry.photos[0] : (course.image || null);
+  const photoEl = firstPhoto
+    ? `<img class="card-photo" src="${firstPhoto}" alt="${course.name}">`
+    : `<div class="card-photo-placeholder ${played ? 'played-placeholder' : ''}">${played ? '✅' : '🏌️'}</div>`;
+
+  const stars = [1,2,3,4,5].map(i =>
+    `<span class="star ${entry.rating >= i ? 'filled' : ''}">★</span>`
+  ).join('');
+
+  const noteEl = entry.notes
+    ? `<div class="card-note">"${entry.notes}"</div>`
+    : (played ? `<div class="card-note" style="color:#aaa">Ingen notat lagt til</div>` : '');
+
+  card.innerHTML = `
+    ${photoEl}
+    <div class="card-body">
+      <div class="card-top">
+        <div class="course-name">${course.name}</div>
+        ${entry.bestScore ? `<div class="best-score" title="Beste score">${entry.tee ? `<span class="tee-dot" style="background:${teeColor(entry.tee, course.id)}"></span>` : ''}🏆 ${entry.bestScore}</div>` : ''}
+        <div class="played-check">✓</div>
+      </div>
+      <div class="course-location">📍 ${course.location}</div>
+      <div class="card-badges">
+        <span class="badge badge-holes">${course.holes} hull</span>
+        <span class="badge badge-par">Par ${course.par}</span>
+        <span class="badge badge-type">${course.type}</span>
+      </div>
+      ${played ? `<div class="card-rating">${stars}</div>` : ''}
+      ${noteEl}
+    </div>
+  `;
+  return card;
+}
+
+function refreshCard(courseId) {
+  const course = COURSES.find(c => c.id === courseId);
+  const old = document.getElementById('card-' + courseId);
+  const newCard = buildCard(course);
+  old.replaceWith(newCard);
+  refreshSidebarItem(courseId);
+}
+
+// Stats
+function updateStats() {
+  const played = COURSES.filter(c => data[c.id]?.played).length;
+  const total = COURSES.length;
+  const ratings = COURSES.map(c => data[c.id]?.rating).filter(Boolean);
+  const pct = Math.round((played / total) * 100);
+  document.getElementById('stat-played').textContent = played;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-pct').textContent = pct + '%';
+}
+
+// MODAL
+function openModal(id) {
+  currentId = id;
+  const course = COURSES.find(c => c.id === id);
+  const entry = data[id] || {};
+
+  document.getElementById('modal-title').textContent = course.name;
+  document.getElementById('modal-location').textContent = '📍 ' + course.location;
+
+  const played = entry.played || false;
+  const toggle = document.getElementById('played-toggle');
+  toggle.classList.toggle('active', played);
+  document.getElementById('played-fields').style.display = played ? 'flex' : 'none';
+
+  document.getElementById('modal-best-score').value = entry.bestScore || '';
+  currentTee = entry.tee || null;
+  renderTeeButtons(course);
+  document.getElementById('modal-notes').value = entry.notes || '';
+
+  currentRating = entry.rating || 0;
+  currentPhotos = entry.photos ? [...entry.photos] : [];
+  renderStars();
+  renderPhotoThumbs();
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentId = null;
+}
+
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+function togglePlayed() {
+  const toggle = document.getElementById('played-toggle');
+  const active = toggle.classList.toggle('active');
+  document.getElementById('played-fields').style.display = active ? 'flex' : 'none';
+}
+
+function setRating(val) {
+  currentRating = val;
+  renderStars();
+}
+
+function renderStars() {
+  document.querySelectorAll('#star-rating .star').forEach((s, i) => {
+    s.classList.toggle('filled', i < currentRating);
+  });
+}
+
+// Tee buttons
+function renderTeeButtons(course) {
+  const tees = course?.tees || DEFAULT_TEES;
+  const container = document.getElementById('tee-selector');
+  container.innerHTML = '';
+  tees.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'tee-btn' + (currentTee === t.label ? ' active' : '');
+    btn.dataset.tee = t.label;
+    btn.style.setProperty('--tee-color', t.color);
+    btn.textContent = t.label;
+    btn.addEventListener('click', () => {
+      currentTee = currentTee === t.label ? null : t.label;
+      renderTeeButtons(course);
+    });
+    container.appendChild(btn);
+  });
+}
+
+// Star hover effect
+document.querySelectorAll('#star-rating .star').forEach(s => {
+  s.addEventListener('mouseover', () => {
+    const val = parseInt(s.dataset.val);
+    document.querySelectorAll('#star-rating .star').forEach((st, i) => {
+      st.classList.toggle('filled', i < val);
+    });
+  });
+  s.addEventListener('mouseleave', renderStars);
+});
+
+// Photos
+function handlePhotos(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      currentPhotos.push(ev.target.result);
+      renderPhotoThumbs();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+}
+
+function renderPhotoThumbs() {
+  const preview = document.getElementById('photos-preview');
+  preview.innerHTML = '';
+  currentPhotos.forEach((src, i) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb';
+    const img = document.createElement('img');
+    img.src = src;
+    img.onclick = (e) => { e.stopPropagation(); openLightbox(src); };
+    const btn = document.createElement('button');
+    btn.className = 'photo-remove';
+    btn.textContent = '✕';
+    btn.onclick = (e) => { e.stopPropagation(); currentPhotos.splice(i, 1); renderPhotoThumbs(); };
+    thumb.appendChild(img);
+    thumb.appendChild(btn);
+    preview.appendChild(thumb);
+  });
+}
+
+function saveEntry() {
+  const played = document.getElementById('played-toggle').classList.contains('active');
+  if (!data[currentId]) data[currentId] = {};
+  data[currentId].played = played;
+  if (played) {
+    data[currentId].bestScore = document.getElementById('modal-best-score').value || null;
+    data[currentId].tee = currentTee;
+    data[currentId].rating = currentRating;
+    data[currentId].notes = document.getElementById('modal-notes').value.trim();
+    data[currentId].photos = currentPhotos;
+  } else {
+    data[currentId] = { played: false };
+  }
+  saveData(data);
+  refreshCard(currentId);
+  updateStats();
+  closeModal();
+}
+
+// Lightbox
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+const REGION_ORDER = ['Østlandet', 'Vestlandet', 'Sørlandet', 'Trøndelag', 'Nord-Norge'];
+
+function regionSlug(r) { return r.toLowerCase().replace(/[^a-z]/g, '-'); }
+
+function buildSidebar() {
+  const list = document.getElementById('sidebar-list');
+  list.innerHTML = '';
+  REGION_ORDER.forEach(region => {
+    const courses = COURSES.filter(c => c.region === region);
+    if (!courses.length) return;
+    const slug = regionSlug(region);
+    const playedCount = courses.filter(c => data[c.id]?.played).length;
+    const expanded = region === 'Østlandet';
+
+    const section = document.createElement('div');
+
+    const header = document.createElement('div');
+    header.className = 'sidebar-region-header';
+    header.innerHTML = `
+      <span class="sidebar-region-arrow" id="arrow-${slug}">${expanded ? '▼' : '▶'}</span>
+      <span class="sidebar-region-name">${region}</span>
+      <span class="sidebar-region-count" id="count-${slug}">${playedCount}/${courses.length}</span>
+    `;
+    header.onclick = () => toggleRegionSidebar(slug);
+
+    const items = document.createElement('div');
+    items.className = 'sidebar-region-items';
+    items.id = 'sidebar-region-' + slug;
+    if (!expanded) items.style.display = 'none';
+
+    courses.forEach(c => {
+      const entry = data[c.id] || {};
+      const item = document.createElement('div');
+      item.className = 'sidebar-item' + (entry.played ? ' played' : '');
+      item.id = 'sidebar-' + c.id;
+      item.innerHTML = `<span class="sidebar-dot"></span>${c.name}`;
+      item.onclick = () => {
+        const card = document.getElementById('card-' + c.id);
+        // Ensure main region section is visible
+        const section = document.getElementById('section-' + regionSlug(c.region));
+        if (section) section.style.display = '';
+        items.style.display = '';
+        document.getElementById('arrow-' + slug).textContent = '▼';
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+      items.appendChild(item);
+    });
+
+    section.appendChild(header);
+    section.appendChild(items);
+    list.appendChild(section);
+  });
+}
+
+function toggleRegionSidebar(slug) {
+  const region = REGION_ORDER.find(r => regionSlug(r) === slug);
+  if (!region) return;
+
+  const isAlreadyOpen = activeRegionSlug === slug;
+
+  // Collapse all sidebar sections and hide all main sections
+  REGION_ORDER.forEach(r => {
+    const s = regionSlug(r);
+    const items = document.getElementById('sidebar-region-' + s);
+    const arrow = document.getElementById('arrow-' + s);
+    const section = document.getElementById('section-' + s);
+    if (items) items.style.display = 'none';
+    if (arrow) arrow.textContent = '▶';
+    if (section) section.style.display = 'none';
+  });
+
+  if (isAlreadyOpen) {
+    activeRegionSlug = null;
+    buildSummaryView();
+    document.getElementById('summary-view').classList.add('visible');
+    return;
+  }
+
+  // Hide summary, expand the clicked region
+  activeRegionSlug = slug;
+  document.getElementById('summary-view').classList.remove('visible');
+
+  const items = document.getElementById('sidebar-region-' + slug);
+  const arrow = document.getElementById('arrow-' + slug);
+  const section = document.getElementById('section-' + slug);
+  if (items) items.style.display = '';
+  if (arrow) arrow.textContent = '▼';
+  if (section) { section.style.display = ''; section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+}
+
+function buildSummaryView() {
+  const totalPlayed = COURSES.filter(c => data[c.id]?.played).length;
+  const totalCourses = COURSES.length;
+
+  // Top-rated courses (played, rating > 0, sorted by rating desc)
+  const topCourses = COURSES
+    .filter(c => data[c.id]?.played && data[c.id]?.rating > 0)
+    .sort((a, b) => (data[b.id].rating - data[a.id].rating) || (data[a.id].bestScore || 999) - (data[b.id].bestScore || 999))
+    .slice(0, 5);
+
+  // Best scores (played, has bestScore)
+  const bestScores = COURSES
+    .filter(c => data[c.id]?.played && data[c.id]?.bestScore)
+    .sort((a, b) => data[a.id].bestScore - data[b.id].bestScore)
+    .slice(0, 5);
+
+  const regionProgressHTML = REGION_ORDER.map(r => {
+    const regionCourses = COURSES.filter(c => c.region === r);
+    const playedCount = regionCourses.filter(c => data[c.id]?.played).length;
+    const pct = regionCourses.length > 0 ? Math.round((playedCount / regionCourses.length) * 100) : 0;
+    return `
+      <div class="region-progress">
+        <div class="region-progress-label">
+          <span>${r}</span>
+          <span>${playedCount}/${regionCourses.length}</span>
+        </div>
+        <div class="region-progress-bar">
+          <div class="region-progress-fill" style="width:${pct}%"></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  const topCoursesHTML = topCourses.length > 0
+    ? topCourses.map(c => {
+        const entry = data[c.id];
+        const stars = '★'.repeat(entry.rating) + '☆'.repeat(5 - entry.rating);
+        const scoreText = entry.bestScore ? `<span class="top-course-score">Score: ${entry.bestScore}</span>` : '';
+        return `<div class="top-course-item" onclick="openModal('${c.id}')">
+          <span class="top-course-stars">${stars}</span>
+          <span class="top-course-name">${c.name}</span>
+          ${scoreText}
+        </div>`;
+      }).join('')
+    : '<p style="color:var(--text-muted);font-size:0.85rem;">Ingen baner rangert ennå.</p>';
+
+  const bestScoresHTML = bestScores.length > 0
+    ? bestScores.map(c => {
+        const entry = data[c.id];
+        const teeText = entry.tee ? ` <span style="font-size:0.75rem;color:var(--text-muted)">(${entry.tee})</span>` : '';
+        return `<div class="top-course-item" onclick="openModal('${c.id}')">
+          <span class="top-course-score" style="font-size:1rem;min-width:36px;text-align:center">${entry.bestScore}</span>
+          <span class="top-course-name">${c.name}${teeText}</span>
+        </div>`;
+      }).join('')
+    : '<p style="color:var(--text-muted);font-size:0.85rem;">Ingen score registrert ennå.</p>';
+
+  document.getElementById('summary-view').innerHTML = `
+    <div class="summary-heading">Ditt golfliv</div>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-card-label">Spilte baner</div>
+        <div class="summary-card-value">${totalPlayed}</div>
+        <div class="summary-card-sub">av ${totalCourses} totalt</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">Fullført</div>
+        <div class="summary-card-value">${totalCourses > 0 ? Math.round((totalPlayed / totalCourses) * 100) : 0}%</div>
+        <div class="summary-card-sub">av norske golfbaner</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">Regioner utforsket</div>
+        <div class="summary-card-value">${REGION_ORDER.filter(r => COURSES.filter(c => c.region === r).some(c => data[c.id]?.played)).length}</div>
+        <div class="summary-card-sub">av ${REGION_ORDER.length} regioner</div>
+      </div>
+    </div>
+
+    <div class="summary-section-title">Fremgang per region</div>
+    ${regionProgressHTML}
+
+    <div class="summary-section-title">Favorittbaner</div>
+    <div class="top-courses-list">${topCoursesHTML}</div>
+
+    <div class="summary-section-title">Beste scorer</div>
+    <div class="top-courses-list">${bestScoresHTML}</div>
+  `;
+}
+
+function refreshSidebarItem(courseId) {
+  const entry = data[courseId] || {};
+  const item = document.getElementById('sidebar-' + courseId);
+  if (item) item.className = 'sidebar-item' + (entry.played ? ' played' : '');
+  // Update region played count
+  const course = COURSES.find(c => c.id === courseId);
+  if (!course) return;
+  const slug = regionSlug(course.region);
+  const courses = COURSES.filter(c => c.region === course.region);
+  const playedCount = courses.filter(c => data[c.id]?.played).length;
+  const countEl = document.getElementById('count-' + slug);
+  if (countEl) countEl.textContent = `${playedCount}/${courses.length}`;
+}
+
+// Init
+buildSidebar();
+buildCourses();
+// Hide all regions except Østlandet on init
+REGION_ORDER.forEach(r => {
+  if (r !== 'Østlandet') {
+    const section = document.getElementById('section-' + regionSlug(r));
+    if (section) section.style.display = 'none';
+  }
+});
+updateStats();
+</script>
+</body>
+</html>
