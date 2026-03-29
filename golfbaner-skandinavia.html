@@ -889,7 +889,7 @@ const COURSES = [
     { label: '47', color: '#f5a623' },
     { label: '39', color: '#c62828' },
   ]},
-  { id: 'lommedalen', name: 'Lommedalen Golfklubb', location: 'Lommedalen, Bærum', region: 'Østlandet', holes: 9, par: 67, type: 'Parkbane', image: 'https://images.squarespace-cdn.com/content/v1/6041035720a81d188559ae69/1771543093328-DNCP6BW0KIYPJ4QDFCYY/unsplash-image-uy5ZEqUOscs.jpg', tees: [
+  { id: 'lommedalen', name: 'Lommedalen Golfklubb', location: 'Lommedalen, Bærum', region: 'Østlandet', holes: 9, holesDisplay: '2×9 hull', par: 67, type: 'Parkbane', image: 'https://images.squarespace-cdn.com/content/v1/6041035720a81d188559ae69/1771543093328-DNCP6BW0KIYPJ4QDFCYY/unsplash-image-uy5ZEqUOscs.jpg', tees: [
     { label: 'Gul', color: '#f5a623' },
     { label: 'Rød', color: '#c62828' },
   ]},
@@ -1150,7 +1150,7 @@ function buildCard(course) {
       </div>
       <div class="course-location">📍 ${course.location}</div>
       <div class="card-badges">
-        <span class="badge badge-holes">${course.holes} hull</span>
+        <span class="badge badge-holes">${course.holesDisplay || course.holes + ' hull'}</span>
         <span class="badge badge-par">Par ${course.par}</span>
         <span class="badge badge-type">${course.type}</span>
       </div>
