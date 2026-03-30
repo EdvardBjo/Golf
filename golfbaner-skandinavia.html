@@ -121,7 +121,7 @@
     /* LAYOUT */
     .page-body {
       display: flex;
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 24px 20px 60px;
       gap: 24px;
@@ -691,6 +691,139 @@
       letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 2px;
     }
 
+    /* FRIENDS PANEL */
+    .friends-panel {
+      width: 210px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .friends-panel-title {
+      background: var(--green-dark);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .friends-search-wrap {
+      padding: 10px 10px 6px;
+      position: relative;
+    }
+    .friends-search-input {
+      width: 100%;
+      padding: 8px 10px 8px 30px;
+      border: 2px solid var(--green-border);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      outline: none;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .friends-search-input:focus { border-color: var(--green-mid); }
+    .friends-search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .friends-search-results {
+      background: white;
+      border: 1px solid var(--green-border);
+      border-radius: 8px;
+      margin-top: 4px;
+      overflow: hidden;
+      display: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .friends-search-results.visible { display: block; }
+    .friend-result-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 0.82rem;
+    }
+    .friend-result-item:hover { background: var(--green-light); }
+    .friend-result-item + .friend-result-item { border-top: 1px solid var(--green-border); }
+    .friend-add-btn {
+      margin-left: auto;
+      background: var(--green-mid);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 3px 7px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .friend-add-btn:hover { background: var(--green-dark); }
+    .friend-add-btn.added { background: #aaa; cursor: default; }
+
+    .friends-list { padding: 4px 0 8px; }
+    .friends-empty {
+      padding: 14px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      font-style: italic;
+    }
+    .friend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      transition: background 0.15s;
+    }
+    .friend-item:hover { background: var(--green-light); }
+    .friend-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--green-mid);
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 800;
+      flex-shrink: 0; overflow: hidden;
+    }
+    .friend-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .friend-info { flex: 1; min-width: 0; }
+    .friend-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .friend-sub {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .friend-remove-btn {
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .friend-remove-btn:hover { color: #e53935; background: #fdecea; }
+
     @media (max-width: 600px) {
       header h1 { font-size: 1.5rem; }
       .stat { padding: 12px 16px; }
@@ -966,6 +1099,15 @@
   <main id="main">
     <div id="summary-view"></div>
   </main>
+  <aside class="friends-panel" id="friends-panel" style="display:none">
+    <div class="friends-panel-title">Venner</div>
+    <div class="friends-search-wrap">
+      <span class="friends-search-icon">🔍</span>
+      <input class="friends-search-input" id="friends-search" type="text" placeholder="Søk etter spiller...">
+      <div class="friends-search-results" id="friends-search-results"></div>
+    </div>
+    <div class="friends-list" id="friends-list"></div>
+  </aside>
 </div>
 
 <!-- MODAL -->
@@ -1425,6 +1567,123 @@ function saveProfile() {
   saveProfiles(profiles);
   updateProfileBadge();
   closeProfileModal();
+}
+
+// ===================== FRIENDS =====================
+function ensureTestProfiles() {
+  const profiles = loadProfiles();
+  if (!profiles.some(p => p.id === 'test_stian_paulsen')) {
+    profiles.push({
+      id: 'test_stian_paulsen',
+      firstName: 'Stian',
+      lastName: 'Paulsen',
+      handicap: '12.4',
+      homeclub: 'Miklagard GK',
+      photo: null,
+      createdAt: '2026-01-10'
+    });
+    saveProfiles(profiles);
+  }
+}
+
+function getFriendIds() {
+  const profile = getActiveProfile();
+  return profile?.friends || [];
+}
+
+function saveFriendIds(ids) {
+  const profiles = loadProfiles();
+  const id = getActiveProfileId();
+  const idx = profiles.findIndex(p => p.id === id);
+  if (idx >= 0) { profiles[idx].friends = ids; saveProfiles(profiles); }
+}
+
+function isFriend(profileId) {
+  return getFriendIds().includes(profileId);
+}
+
+function addFriend(profileId) {
+  const ids = getFriendIds();
+  if (!ids.includes(profileId)) { ids.push(profileId); saveFriendIds(ids); }
+  renderFriendsList();
+  renderSearchResults(document.getElementById('friends-search').value);
+}
+
+function removeFriend(profileId) {
+  const ids = getFriendIds().filter(id => id !== profileId);
+  saveFriendIds(ids);
+  renderFriendsList();
+}
+
+function searchProfiles(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
+  const profiles = loadProfiles();
+  const activeId = getActiveProfileId();
+  return profiles.filter(p => p.id !== activeId && fullName(p).toLowerCase().includes(q));
+}
+
+function renderSearchResults(query) {
+  const resultsEl = document.getElementById('friends-search-results');
+  const results = searchProfiles(query);
+  if (!query.trim() || results.length === 0) {
+    resultsEl.classList.remove('visible');
+    resultsEl.innerHTML = '';
+    return;
+  }
+  resultsEl.innerHTML = results.map(p => {
+    const already = isFriend(p.id);
+    const avatarHtml = p.photo
+      ? `<div class="friend-avatar"><img src="${p.photo}" alt=""></div>`
+      : `<div class="friend-avatar">${getInitials(p)}</div>`;
+    return `<div class="friend-result-item">
+      ${avatarHtml}
+      <span style="flex:1;font-weight:600">${fullName(p)}</span>
+      <button class="friend-add-btn${already ? ' added' : ''}"
+        onclick="${already ? '' : `addFriend('${p.id}')`}"
+        ${already ? 'disabled' : ''}>${already ? 'Lagt til' : '+ Legg til'}</button>
+    </div>`;
+  }).join('');
+  resultsEl.classList.add('visible');
+}
+
+function renderFriendsList() {
+  const listEl = document.getElementById('friends-list');
+  const ids = getFriendIds();
+  const profiles = loadProfiles();
+  const friends = ids.map(id => profiles.find(p => p.id === id)).filter(Boolean);
+  if (friends.length === 0) {
+    listEl.innerHTML = '<div class="friends-empty">Ingen venner ennå.<br>Søk for å legge til.</div>';
+    return;
+  }
+  listEl.innerHTML = friends.map(p => {
+    const avatarHtml = p.photo
+      ? `<img src="${p.photo}" alt="">`
+      : getInitials(p);
+    const hcp = p.handicap ? `HCP ${p.handicap}` : '';
+    const club = p.homeclub || '';
+    const sub = [hcp, club].filter(Boolean).join(' · ');
+    return `<div class="friend-item">
+      <div class="friend-avatar">${p.photo ? `<img src="${p.photo}" alt="">` : getInitials(p)}</div>
+      <div class="friend-info">
+        <div class="friend-name">${fullName(p)}</div>
+        ${sub ? `<div class="friend-sub">${sub}</div>` : ''}
+      </div>
+      <button class="friend-remove-btn" onclick="removeFriend('${p.id}')" title="Fjern venn">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function initFriendsPanel() {
+  document.getElementById('friends-panel').style.display = '';
+  renderFriendsList();
+  const input = document.getElementById('friends-search');
+  input.addEventListener('input', () => renderSearchResults(input.value));
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.friends-search-wrap')) {
+      document.getElementById('friends-search-results').classList.remove('visible');
+    }
+  });
 }
 
 // ===================== PERSIST DATA =====================
@@ -1898,8 +2157,10 @@ function refreshSidebarItem(courseId) {
 // Init
 function startApp() {
   document.getElementById('setup-overlay').classList.add('hidden');
+  ensureTestProfiles();
   data = loadData();
   updateProfileBadge();
+  initFriendsPanel();
   buildSidebar();
   buildCourses();
   REGION_ORDER.forEach(r => {
