@@ -628,6 +628,60 @@
     .top-course-name { font-weight: 600; font-size: 0.9rem; color: var(--green-dark); flex: 1; }
     .top-course-score { font-size: 0.78rem; font-weight: 700; color: #b8860b; }
 
+    /* FELLES BANER — shared courses with friends */
+    .felles-item {
+      display: flex; align-items: center; gap: 12px;
+      background: white; border-radius: 10px;
+      padding: 10px 12px; cursor: pointer;
+      box-shadow: var(--shadow); transition: background 0.15s;
+    }
+    .felles-item:hover { background: var(--green-light); }
+    .felles-thumb {
+      width: 48px; height: 48px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0; background: var(--green-border);
+    }
+    .felles-thumb-placeholder {
+      width: 48px; height: 48px; border-radius: 8px; flex-shrink: 0;
+      background: var(--green-light); display: flex; align-items: center;
+      justify-content: center; font-size: 1.2rem;
+    }
+    .felles-info { flex: 1; min-width: 0; }
+    .felles-name {
+      font-weight: 700; font-size: 0.9rem;
+      color: var(--green-dark); white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .felles-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .felles-bubbles { display: flex; gap: -4px; flex-direction: row; }
+    .friend-bubble {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--green-mid); color: white;
+      font-size: 0.62rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid white; margin-left: -6px; flex-shrink: 0;
+      overflow: hidden;
+    }
+    .friend-bubble:first-child { margin-left: 0; }
+    .friend-bubble img { width: 100%; height: 100%; object-fit: cover; }
+    .friend-bubble.overflow {
+      background: #ccc; color: #555; font-size: 0.6rem;
+    }
+
+    /* Friend bubbles on course cards */
+    .card-friends {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 0 2px;
+      border-top: 1px solid var(--green-border);
+      margin-top: 6px;
+    }
+    .card-friends-label {
+      font-size: 0.7rem; color: var(--text-muted); flex-shrink: 0;
+    }
+    .card-friends-bubbles { display: flex; }
+    .card-friends-bubbles .friend-bubble {
+      width: 22px; height: 22px; font-size: 0.55rem;
+    }
+
     /* VIEW PROFILE BANNER */
     #view-banner {
       background: linear-gradient(90deg, #1a4a2e 0%, #2d7a4f 100%);
@@ -2186,6 +2240,22 @@ function buildCard(course) {
       ${noteEl}
     </div>
   `;
+
+  // Append friend bubbles if own profile and friends have also played
+  if (played && !viewingProfileId) {
+    const friendsPlayed = getFriendsWhoPlayed(course.id);
+    if (friendsPlayed.length > 0) {
+      const cardBody = card.querySelector('.card-body');
+      const friendsEl = document.createElement('div');
+      friendsEl.className = 'card-friends';
+      friendsEl.innerHTML = `
+        <span class="card-friends-label">Venner:</span>
+        <div class="card-friends-bubbles">${friendBubblesHTML(friendsPlayed, 5)}</div>
+      `;
+      cardBody.appendChild(friendsEl);
+    }
+  }
+
   return card;
 }
 
@@ -2384,6 +2454,33 @@ function closeLightbox() {
 const REGION_ORDER = ['Østlandet', 'Vestlandet', 'Sørlandet', 'Trøndelag', 'Nord-Norge'];
 
 function regionSlug(r) { return r.toLowerCase().replace(/[^a-z]/g, '-'); }
+
+// Returns list of friend profiles who have played a given course
+function getFriendsWhoPlayed(courseId) {
+  if (viewingProfileId) return []; // don't show when browsing a friend's profile
+  const friendIds = getFriendIds();
+  const profiles = loadProfiles();
+  return friendIds.map(id => {
+    const profile = profiles.find(p => p.id === id);
+    if (!profile) return null;
+    try {
+      const fd = JSON.parse(localStorage.getItem('golf_entries_' + id) || '{}');
+      return fd[courseId]?.played ? profile : null;
+    } catch { return null; }
+  }).filter(Boolean);
+}
+
+// Builds the HTML for a row of friend avatar bubbles
+function friendBubblesHTML(friends, max = 4) {
+  const shown = friends.slice(0, max);
+  const overflow = friends.length - max;
+  let html = shown.map(p => p.photo
+    ? `<div class="friend-bubble" title="${fullName(p)}"><img src="${p.photo}" alt=""></div>`
+    : `<div class="friend-bubble" title="${fullName(p)}">${getInitials(p)}</div>`
+  ).join('');
+  if (overflow > 0) html += `<div class="friend-bubble overflow">+${overflow}</div>`;
+  return html;
+}
 
 // Returns Norwegian possessive of a first name ("Lars" → "Lars'", "Edvard" → "Edvards")
 function possessiveOf(firstName) {
@@ -2585,6 +2682,37 @@ function buildSummaryView() {
       }).join('')
     : '<p style="color:var(--text-muted);font-size:0.85rem;">Ingen score registrert ennå.</p>';
 
+  // Felles baner — courses shared with friends (only on own profile)
+  let fellesHTML = '';
+  if (!viewingProfileId) {
+    const fellesCourses = COURSES
+      .filter(c => data[c.id]?.played)
+      .map(c => ({ course: c, friends: getFriendsWhoPlayed(c.id) }))
+      .filter(({ friends }) => friends.length > 0)
+      .sort((a, b) => b.friends.length - a.friends.length);
+
+    if (fellesCourses.length > 0) {
+      const fellesItemsHTML = fellesCourses.map(({ course, friends }) => {
+        const thumbHTML = course.image
+          ? `<img class="felles-thumb" src="${course.image}" alt="${course.name}">`
+          : `<div class="felles-thumb-placeholder">⛳</div>`;
+        const friendWord = friends.length === 1 ? 'venn' : 'venner';
+        return `<div class="felles-item" onclick="openModal('${course.id}')">
+          ${thumbHTML}
+          <div class="felles-info">
+            <div class="felles-name">${course.name}</div>
+            <div class="felles-sub">${friends.length} ${friendWord} har spilt her</div>
+          </div>
+          <div class="felles-bubbles">${friendBubblesHTML(friends, 4)}</div>
+        </div>`;
+      }).join('');
+      fellesHTML = `
+        <div class="summary-section-title">👥 Felles baner med venner</div>
+        <div class="top-courses-list">${fellesItemsHTML}</div>
+      `;
+    }
+  }
+
   document.getElementById('summary-view').innerHTML = `
     <div class="summary-heading">${getGolflivLabel()}</div>
 
@@ -2613,6 +2741,8 @@ function buildSummaryView() {
 
     <div class="summary-section-title">Fremgang per region</div>
     ${regionProgressHTML}
+
+    ${fellesHTML}
 
     ${top3.length > 0 && remainingTopCourses.length > 0 ? `
     <div class="summary-section-title">Øvrige favoritter</div>
