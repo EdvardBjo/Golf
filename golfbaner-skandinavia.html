@@ -1620,18 +1620,199 @@ function saveProfile() {
 
 // ===================== FRIENDS =====================
 function ensureTestProfiles() {
-  const profiles = loadProfiles();
-  if (!profiles.some(p => p.id === 'test_stian_paulsen')) {
-    profiles.push({
+  const TEST_USERS = [
+    {
       id: 'test_stian_paulsen',
-      firstName: 'Stian',
-      lastName: 'Paulsen',
-      handicap: '12.4',
-      homeclub: 'Miklagard GK',
-      photo: null,
-      createdAt: '2026-01-10'
-    });
-    saveProfiles(profiles);
+      firstName: 'Stian', lastName: 'Paulsen',
+      handicap: '12.4', homeclub: 'Miklagard GK', createdAt: '2026-01-10',
+      entries: {
+        'miklagard':  { played: true, rating: 5, bestScore: 88, tee: 'III',   notes: 'Hjemmebanen min – kjenner hvert hull!' },
+        'oslo-gk':    { played: true, rating: 4, bestScore: 91, tee: '5800m', notes: 'Flott bane i flotte omgivelser' },
+        'haga':       { played: true, rating: 4, bestScore: 89 },
+        'gronmo':     { played: true, rating: 3, bestScore: 94 },
+        'ostmarka':   { played: true, rating: 4, bestScore: 90, tee: '51',    notes: 'Utfordrende skogsbane' },
+        'gjersjoen':  { played: true, rating: 3, bestScore: 95 },
+        'hauger':     { played: true, rating: 4, bestScore: 87 },
+        'lommedalen': { played: true, rating: 3, bestScore: 72, tee: 'Gul' },
+      }
+    },
+    {
+      id: 'test_lars_eriksen',
+      firstName: 'Lars', lastName: 'Eriksen',
+      handicap: '8.2', homeclub: 'Oslo GK', createdAt: '2025-11-05',
+      entries: {
+        'oslo-gk':     { played: true, rating: 5, bestScore: 79, tee: '5800m', notes: 'Drømmebanen!' },
+        'miklagard':   { played: true, rating: 4, bestScore: 83, tee: 'II' },
+        'haga':        { played: true, rating: 5, bestScore: 80, notes: 'Elsker Haga!' },
+        'gronmo':      { played: true, rating: 4, bestScore: 82 },
+        'grini':       { played: true, rating: 5, bestScore: 78, notes: 'Utrolig bane' },
+        'kjekstad':    { played: true, rating: 4, bestScore: 81 },
+        'oppegard':    { played: true, rating: 3, bestScore: 85 },
+        'baerumsmarka':{ played: true, rating: 4, bestScore: 82 },
+        'asker':       { played: true, rating: 3, bestScore: 86 },
+        'stavanger':   { played: true, rating: 5, bestScore: 77, notes: 'Beste banen jeg har spilt!' },
+        'sola':        { played: true, rating: 4, bestScore: 81 },
+        'bergen':      { played: true, rating: 4, bestScore: 80 },
+      }
+    },
+    {
+      id: 'test_marte_johansen',
+      firstName: 'Marte', lastName: 'Johansen',
+      handicap: '18.5', homeclub: 'Haga Golfklubb', createdAt: '2025-09-15',
+      entries: {
+        'haga':       { played: true, rating: 5, bestScore: 96,  notes: 'Hjemmebanen min, nydelig parkbane!' },
+        'oslo-gk':    { played: true, rating: 4, bestScore: 99 },
+        'gronmo':     { played: true, rating: 3, bestScore: 102 },
+        'lommedalen': { played: true, rating: 4, bestScore: 78, tee: 'Rød', notes: 'Fin liten bane' },
+        'asker':      { played: true, rating: 3, bestScore: 100 },
+        'ballerud':   { played: true, rating: 4, bestScore: 94 },
+      }
+    },
+    {
+      id: 'test_kjetil_andersen',
+      firstName: 'Kjetil', lastName: 'Andersen',
+      handicap: '5.1', homeclub: 'Miklagard GK', createdAt: '2025-06-20',
+      entries: {
+        'miklagard':  { played: true, rating: 5, bestScore: 73, tee: 'I',     notes: 'Spiller her ukentlig' },
+        'oslo-gk':    { played: true, rating: 5, bestScore: 74, tee: '6100m' },
+        'grini':      { played: true, rating: 4, bestScore: 75 },
+        'haga':       { played: true, rating: 5, bestScore: 73, notes: 'Fantastisk parkbane!' },
+        'ostmarka':   { played: true, rating: 4, bestScore: 76, tee: '56' },
+        'gronmo':     { played: true, rating: 4, bestScore: 75 },
+        'hauger':     { played: true, rating: 3, bestScore: 77 },
+        'kjekstad':   { played: true, rating: 4, bestScore: 74 },
+        'stavanger':  { played: true, rating: 5, bestScore: 72, notes: 'Kursrekord!' },
+        'sola':       { played: true, rating: 5, bestScore: 71, notes: 'Linksbane i toppklasse' },
+        'bergen':     { played: true, rating: 4, bestScore: 73 },
+        'fana':       { played: true, rating: 4, bestScore: 74 },
+        'hafjell':    { played: true, rating: 3, bestScore: 78 },
+      }
+    },
+    {
+      id: 'test_ingrid_haugen',
+      firstName: 'Ingrid', lastName: 'Haugen',
+      handicap: '22.0', homeclub: 'Bergen GK', createdAt: '2025-10-30',
+      entries: {
+        'bergen':  { played: true, rating: 5, bestScore: 102, notes: 'Hjemmebanen, vakker utsikt!' },
+        'fana':    { played: true, rating: 4, bestScore: 105 },
+        'meland':  { played: true, rating: 4, bestScore: 104, notes: 'Flott kystbane' },
+        'sotra':   { played: true, rating: 3, bestScore: 108 },
+        'voss':    { played: true, rating: 4, bestScore: 103, notes: 'Spektakulær fjellbane' },
+        'oslo-gk': { played: true, rating: 3, bestScore: 110 },
+        'haga':    { played: true, rating: 3, bestScore: 107 },
+      }
+    },
+    {
+      id: 'test_tor_olsen',
+      firstName: 'Tor', lastName: 'Olsen',
+      handicap: '11.3', homeclub: 'Stavanger GK', createdAt: '2025-08-12',
+      entries: {
+        'stavanger':  { played: true, rating: 5, bestScore: 83, notes: 'Beste banen på Vestlandet' },
+        'sola':       { played: true, rating: 5, bestScore: 82, notes: 'Linksbane i verdensklasse' },
+        'sandnes':    { played: true, rating: 3, bestScore: 87 },
+        'haugaland':  { played: true, rating: 4, bestScore: 84 },
+        'haugesund':  { played: true, rating: 3, bestScore: 88 },
+        'oslo-gk':    { played: true, rating: 4, bestScore: 85 },
+        'miklagard':  { played: true, rating: 3, bestScore: 89, tee: 'II' },
+        'bergen':     { played: true, rating: 4, bestScore: 84 },
+        'grini':      { played: true, rating: 4, bestScore: 85 },
+      }
+    },
+    {
+      id: 'test_silje_berg',
+      firstName: 'Silje', lastName: 'Berg',
+      handicap: '15.7', homeclub: 'Grønmo GK', createdAt: '2026-02-01',
+      entries: {
+        'gronmo':     { played: true, rating: 4, bestScore: 93, notes: 'Nydelig skogsbane' },
+        'oslo-gk':    { played: true, rating: 5, bestScore: 91, notes: 'Verdt turen!' },
+        'ostmarka':   { played: true, rating: 3, bestScore: 97, tee: '47' },
+        'haga':       { played: true, rating: 4, bestScore: 92 },
+        'asker':      { played: true, rating: 3, bestScore: 98 },
+        'lommedalen': { played: true, rating: 4, bestScore: 76, tee: 'Rød' },
+        'gjersjoen':  { played: true, rating: 3, bestScore: 95 },
+      }
+    },
+    {
+      id: 'test_ole_kristiansen',
+      firstName: 'Ole', lastName: 'Kristiansen',
+      handicap: '3.4', homeclub: 'Oslo GK', createdAt: '2025-04-18',
+      entries: {
+        'oslo-gk':    { played: true, rating: 5, bestScore: 70, tee: '6100m', notes: 'Drømmebane!' },
+        'grini':      { played: true, rating: 5, bestScore: 69, notes: 'Best i klassen' },
+        'miklagard':  { played: true, rating: 5, bestScore: 71, tee: 'I' },
+        'haga':       { played: true, rating: 4, bestScore: 72 },
+        'kjekstad':   { played: true, rating: 4, bestScore: 71 },
+        'hauger':     { played: true, rating: 4, bestScore: 73 },
+        'ostmarka':   { played: true, rating: 4, bestScore: 72, tee: '56' },
+        'gronmo':     { played: true, rating: 5, bestScore: 70 },
+        'stavanger':  { played: true, rating: 5, bestScore: 69, notes: 'Perfekt runde!' },
+        'sola':       { played: true, rating: 5, bestScore: 68, notes: 'Under par! 🏆' },
+        'bergen':     { played: true, rating: 4, bestScore: 71 },
+        'fana':       { played: true, rating: 5, bestScore: 70 },
+        'hafjell':    { played: true, rating: 4, bestScore: 74 },
+        'trysil':     { played: true, rating: 3, bestScore: 76 },
+      }
+    },
+    {
+      id: 'test_anette_larsen',
+      firstName: 'Anette', lastName: 'Larsen',
+      handicap: '25.0', homeclub: 'Lommedalen GK', createdAt: '2026-03-01',
+      entries: {
+        'lommedalen':  { played: true, rating: 5, bestScore: 82, tee: 'Rød', notes: 'Favorittbanen min!' },
+        'gronmo':      { played: true, rating: 3, bestScore: 108 },
+        'groruddalen': { played: true, rating: 4, bestScore: 96 },
+        'ballerud':    { played: true, rating: 3, bestScore: 99 },
+        'haga':        { played: true, rating: 4, bestScore: 102, notes: 'Fin tur med venner' },
+      }
+    },
+    {
+      id: 'test_henrik_dahl',
+      firstName: 'Henrik', lastName: 'Dahl',
+      handicap: '9.8', homeclub: 'Kjekstad GK', createdAt: '2025-07-25',
+      entries: {
+        'kjekstad':    { played: true, rating: 5, bestScore: 81, notes: 'Hjemmebane – kjenner hvert hull' },
+        'oslo-gk':     { played: true, rating: 4, bestScore: 84, tee: '5800m' },
+        'miklagard':   { played: true, rating: 4, bestScore: 83, tee: 'III' },
+        'haga':        { played: true, rating: 5, bestScore: 80, notes: 'Favorittbanen utenom hjemme!' },
+        'baerumsmarka':{ played: true, rating: 3, bestScore: 87 },
+        'asker':       { played: true, rating: 4, bestScore: 83 },
+        'hauger':      { played: true, rating: 4, bestScore: 82 },
+        'grini':       { played: true, rating: 5, bestScore: 79 },
+        'drammen':     { played: true, rating: 3, bestScore: 88 },
+        'ringerike':   { played: true, rating: 4, bestScore: 84 },
+      }
+    },
+  ];
+
+  const profiles = loadProfiles();
+  let changed = false;
+  TEST_USERS.forEach(user => {
+    if (!profiles.some(p => p.id === user.id)) {
+      const { entries, ...profileData } = user;
+      profiles.push({ ...profileData, photo: null });
+      changed = true;
+    }
+    // Save entries if not already stored
+    const entriesKey = 'golf_entries_' + user.id;
+    if (!localStorage.getItem(entriesKey)) {
+      localStorage.setItem(entriesKey, JSON.stringify(user.entries));
+    }
+  });
+  if (changed) saveProfiles(profiles);
+}
+
+function ensureTestFriends() {
+  const testIds = [
+    'test_stian_paulsen', 'test_lars_eriksen', 'test_marte_johansen',
+    'test_kjetil_andersen', 'test_ingrid_haugen', 'test_tor_olsen',
+    'test_silje_berg', 'test_ole_kristiansen', 'test_anette_larsen',
+    'test_henrik_dahl'
+  ];
+  const activeId = getActiveProfileId();
+  const current = getFriendIds();
+  const toAdd = testIds.filter(id => id !== activeId && !current.includes(id));
+  if (toAdd.length > 0) {
+    saveFriendIds([...current, ...toAdd]);
   }
 }
 
@@ -2261,6 +2442,7 @@ function refreshSidebarItem(courseId) {
 function startApp() {
   document.getElementById('setup-overlay').classList.add('hidden');
   ensureTestProfiles();
+  ensureTestFriends();
   data = loadData();
   updateProfileBadge();
   initFriendsPanel();
