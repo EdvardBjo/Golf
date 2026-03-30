@@ -713,9 +713,15 @@
     </div>
     <input type="file" id="setup-photo-input" accept="image/*" style="display:none" onchange="handleSetupPhoto(event)">
 
-    <div class="setup-field">
-      <label class="setup-field-label">Navn *</label>
-      <input type="text" class="setup-input" id="setup-name" placeholder="Ditt navn" maxlength="40">
+    <div class="setup-row">
+      <div class="setup-field">
+        <label class="setup-field-label">Fornavn *</label>
+        <input type="text" class="setup-input" id="setup-firstname" placeholder="Fornavn" maxlength="40">
+      </div>
+      <div class="setup-field">
+        <label class="setup-field-label">Etternavn *</label>
+        <input type="text" class="setup-input" id="setup-lastname" placeholder="Etternavn" maxlength="40">
+      </div>
     </div>
     <div class="setup-row">
       <div class="setup-field">
@@ -1045,9 +1051,15 @@
     <div class="profile-stats-row" id="profile-stats-row"></div>
     <div class="profile-edit-section">
       <div class="profile-section-title">Rediger profil</div>
-      <div class="setup-field">
-        <label class="setup-field-label">Navn</label>
-        <input type="text" class="setup-input" id="profile-edit-name" maxlength="40">
+      <div class="setup-row">
+        <div class="setup-field">
+          <label class="setup-field-label">Fornavn</label>
+          <input type="text" class="setup-input" id="profile-edit-firstname" maxlength="40">
+        </div>
+        <div class="setup-field">
+          <label class="setup-field-label">Etternavn</label>
+          <input type="text" class="setup-input" id="profile-edit-lastname" maxlength="40">
+        </div>
       </div>
       <div class="setup-row">
         <div class="setup-field">
@@ -1297,12 +1309,14 @@ function handleSetupPhoto(e) {
 }
 
 function createProfile() {
-  const name = document.getElementById('setup-name').value.trim();
-  if (!name) { document.getElementById('setup-name').focus(); return; }
+  const firstName = document.getElementById('setup-firstname').value.trim();
+  const lastName = document.getElementById('setup-lastname').value.trim();
+  if (!firstName) { document.getElementById('setup-firstname').focus(); return; }
+  if (!lastName) { document.getElementById('setup-lastname').focus(); return; }
   const handicap = document.getElementById('setup-handicap').value || null;
   const homeclub = document.getElementById('setup-homeclub').value.trim() || null;
   const id = genId();
-  const profile = { id, name, handicap, homeclub, photo: setupPhoto, createdAt: new Date().toISOString().slice(0,10) };
+  const profile = { id, firstName, lastName, handicap, homeclub, photo: setupPhoto, createdAt: new Date().toISOString().slice(0,10) };
   const profiles = loadProfiles();
   // Migrate legacy data if exists
   const legacy = localStorage.getItem('golf_entries');
@@ -1315,8 +1329,13 @@ function createProfile() {
   startApp();
 }
 
-function getInitials(name) {
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+function fullName(profile) {
+  return (profile.firstName || '') + (profile.lastName ? ' ' + profile.lastName : '') || profile.name || '';
+}
+function getInitials(profile) {
+  const f = (profile.firstName || '')[0] || '';
+  const l = (profile.lastName || '')[0] || '';
+  return (f + l).toUpperCase() || '?';
 }
 
 function updateProfileBadge() {
@@ -1326,11 +1345,11 @@ function updateProfileBadge() {
   const avatar = document.getElementById('header-avatar');
   const nameEl = document.getElementById('header-profile-name');
   btn.style.display = 'flex';
-  nameEl.textContent = profile.name.split(' ')[0];
+  nameEl.textContent = profile.firstName || profile.name || '';
   if (profile.photo) {
     avatar.innerHTML = `<img src="${profile.photo}" alt="">`;
   } else {
-    avatar.textContent = getInitials(profile.name);
+    avatar.textContent = getInitials(profile);
   }
 }
 
@@ -1342,11 +1361,11 @@ function openProfileModal() {
   if (profile.photo) {
     avatarLg.innerHTML = `<img src="${profile.photo}" alt="">`;
   } else {
-    avatarLg.textContent = getInitials(profile.name);
+    avatarLg.textContent = getInitials(profile);
   }
-  document.getElementById('profile-modal-name').textContent = profile.name;
+  document.getElementById('profile-modal-name').textContent = fullName(profile);
   const hcpText = profile.handicap ? `HCP ${profile.handicap}` : '';
-  const clubText = profile.homeclub ? profile.homeclub : '';
+  const clubText = profile.homeclub || '';
   document.getElementById('profile-modal-hcp').textContent = [hcpText, clubText].filter(Boolean).join(' · ');
   // Stats
   const played = COURSES.filter(c => data[c.id]?.played).length;
@@ -1360,7 +1379,8 @@ function openProfileModal() {
     <div class="profile-stat"><div class="profile-stat-val">${bestScore}</div><div class="profile-stat-lbl">Beste score</div></div>
   `;
   // Edit fields
-  document.getElementById('profile-edit-name').value = profile.name;
+  document.getElementById('profile-edit-firstname').value = profile.firstName || profile.name || '';
+  document.getElementById('profile-edit-lastname').value = profile.lastName || '';
   document.getElementById('profile-edit-handicap').value = profile.handicap || '';
   document.getElementById('profile-edit-homeclub').value = profile.homeclub || '';
   document.getElementById('profile-modal-overlay').classList.add('open');
@@ -1392,9 +1412,11 @@ function handleProfilePhotoChange(e) {
 function saveProfile() {
   const profile = getActiveProfile();
   if (!profile) return;
-  const name = document.getElementById('profile-edit-name').value.trim();
-  if (!name) return;
-  profile.name = name;
+  const firstName = document.getElementById('profile-edit-firstname').value.trim();
+  const lastName = document.getElementById('profile-edit-lastname').value.trim();
+  if (!firstName || !lastName) return;
+  profile.firstName = firstName;
+  profile.lastName = lastName;
   profile.handicap = document.getElementById('profile-edit-handicap').value || null;
   profile.homeclub = document.getElementById('profile-edit-homeclub').value.trim() || null;
   const profiles = loadProfiles();
