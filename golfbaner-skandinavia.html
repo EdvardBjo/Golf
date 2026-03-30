@@ -559,6 +559,138 @@
     .top-course-name { font-weight: 600; font-size: 0.9rem; color: var(--green-dark); flex: 1; }
     .top-course-score { font-size: 0.78rem; font-weight: 700; color: #b8860b; }
 
+    /* PROFILE SETUP OVERLAY */
+    #setup-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: linear-gradient(160deg, #1a4a2e 0%, #2d7a4f 50%, #1a6fa8 100%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    #setup-overlay.hidden { display: none; }
+
+    .setup-card {
+      background: white; border-radius: 20px;
+      padding: 40px 36px; max-width: 420px; width: 100%;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.35); text-align: center;
+    }
+    .setup-golf-icon { font-size: 2.8rem; margin-bottom: 10px; }
+    .setup-title { font-size: 1.55rem; font-weight: 900; color: var(--green-dark); margin-bottom: 6px; }
+    .setup-sub { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 28px; line-height: 1.5; }
+
+    .setup-avatar-wrap {
+      width: 90px; height: 90px; border-radius: 50%;
+      background: var(--green-light); border: 3px dashed var(--green-border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; margin: 0 auto 24px; overflow: hidden;
+      transition: all 0.2s; position: relative;
+    }
+    .setup-avatar-wrap:hover { border-color: var(--green-mid); background: #d4eeda; }
+    .setup-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .setup-avatar-icon { font-size: 1.8rem; }
+    .setup-avatar-label { font-size: 0.62rem; color: var(--text-muted); margin-top: 2px; }
+
+    .setup-field { margin-bottom: 14px; text-align: left; }
+    .setup-field-label {
+      font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block;
+    }
+    .setup-input {
+      width: 100%; padding: 11px 14px;
+      border: 2px solid var(--green-border); border-radius: 10px;
+      font-size: 0.95rem; outline: none; font-family: inherit; color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .setup-input:focus { border-color: var(--green-mid); }
+    .setup-row { display: flex; gap: 12px; }
+    .setup-row .setup-field { flex: 1; }
+
+    .setup-btn {
+      width: 100%; padding: 14px; margin-top: 10px;
+      background: var(--green-mid); color: white; border: none;
+      border-radius: 10px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: background 0.2s; font-family: inherit;
+    }
+    .setup-btn:hover { background: var(--green-dark); }
+
+    /* PROFILE BUTTON IN HEADER */
+    .header-profile-btn {
+      position: absolute; top: 14px; right: 18px; z-index: 3;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0,0,0,0.28); border-radius: 24px;
+      padding: 5px 12px 5px 5px; cursor: pointer;
+      transition: background 0.2s; backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .header-profile-btn:hover { background: rgba(0,0,0,0.42); }
+    .profile-avatar-sm {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--green-mid); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 800; overflow: hidden; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+    .profile-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-name-sm {
+      font-size: 0.8rem; font-weight: 600; color: white;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4); max-width: 120px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* PROFILE MODAL */
+    #profile-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 100;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    #profile-modal-overlay.open { opacity: 1; pointer-events: all; }
+    #profile-modal-overlay .modal { transform: scale(0.95); transition: transform 0.2s; }
+    #profile-modal-overlay.open .modal { transform: scale(1); }
+
+    .profile-modal-hero {
+      background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+      padding: 28px 24px; border-radius: 16px 16px 0 0;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      position: relative;
+    }
+    .profile-modal-close {
+      position: absolute; top: 14px; right: 14px;
+      background: rgba(255,255,255,0.2); border: none; color: white;
+      width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+      font-size: 1rem; display: flex; align-items: center; justify-content: center;
+    }
+    .profile-modal-close:hover { background: rgba(255,255,255,0.35); }
+
+    .profile-avatar-lg {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(255,255,255,0.2); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; font-weight: 900; overflow: hidden;
+      border: 3px solid rgba(255,255,255,0.5); cursor: pointer;
+      transition: opacity 0.2s; flex-shrink: 0;
+    }
+    .profile-avatar-lg:hover { opacity: 0.85; }
+    .profile-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-modal-name { font-size: 1.2rem; font-weight: 800; color: white; }
+    .profile-modal-hcp { font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+
+    .profile-stats-row {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--green-border);
+    }
+    .profile-stat {
+      flex: 1; padding: 14px 10px; text-align: center;
+      border-right: 1px solid var(--green-border);
+    }
+    .profile-stat:last-child { border-right: none; }
+    .profile-stat-val { font-size: 1.3rem; font-weight: 800; color: var(--green-dark); }
+    .profile-stat-lbl { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; }
+
+    .profile-edit-section { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+    .profile-section-title {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 2px;
+    }
+
     @media (max-width: 600px) {
       header h1 { font-size: 1.5rem; }
       .stat { padding: 12px 16px; }
@@ -567,6 +699,37 @@
   </style>
 </head>
 <body>
+
+<!-- PROFILE SETUP OVERLAY -->
+<div id="setup-overlay" class="hidden">
+  <div class="setup-card">
+    <div class="setup-golf-icon">⛳</div>
+    <div class="setup-title">Velkommen!</div>
+    <div class="setup-sub">Opprett din profil for å starte kartleggingen av ditt golfliv.</div>
+
+    <div class="setup-avatar-wrap" id="setup-avatar-wrap" onclick="document.getElementById('setup-photo-input').click()">
+      <div class="setup-avatar-icon">📷</div>
+      <div class="setup-avatar-label">Legg til bilde</div>
+    </div>
+    <input type="file" id="setup-photo-input" accept="image/*" style="display:none" onchange="handleSetupPhoto(event)">
+
+    <div class="setup-field">
+      <label class="setup-field-label">Navn *</label>
+      <input type="text" class="setup-input" id="setup-name" placeholder="Ditt navn" maxlength="40">
+    </div>
+    <div class="setup-row">
+      <div class="setup-field">
+        <label class="setup-field-label">Handicap</label>
+        <input type="number" class="setup-input" id="setup-handicap" placeholder="f.eks. 18.4" min="-10" max="54" step="0.1">
+      </div>
+      <div class="setup-field">
+        <label class="setup-field-label">Hjemklubb</label>
+        <input type="text" class="setup-input" id="setup-homeclub" placeholder="f.eks. Haga GK" maxlength="40">
+      </div>
+    </div>
+    <button class="setup-btn" onclick="createProfile()">Kom i gang →</button>
+  </div>
+</div>
 
 <header>
   <div class="header-scene">
@@ -767,6 +930,10 @@
       <h1>Norske Golfbaner</h1>
       <p>Hold oversikt over banene du har spilt – legg til bilder, notater og rangeringer</p>
     </div>
+    <div class="header-profile-btn" id="header-profile-btn" onclick="openProfileModal()" style="display:none">
+      <div class="profile-avatar-sm" id="header-avatar"></div>
+      <span class="profile-name-sm" id="header-profile-name"></span>
+    </div>
   </div>
 </header>
 
@@ -861,6 +1028,38 @@
       </div>
 
       <button class="save-btn" onclick="saveEntry()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profile-modal-overlay">
+  <div class="modal" style="max-width:460px">
+    <div class="profile-modal-hero">
+      <button class="profile-modal-close" onclick="closeProfileModal()">✕</button>
+      <div class="profile-avatar-lg" id="profile-avatar-lg" onclick="document.getElementById('profile-photo-input').click()"></div>
+      <input type="file" id="profile-photo-input" accept="image/*" style="display:none" onchange="handleProfilePhotoChange(event)">
+      <div class="profile-modal-name" id="profile-modal-name"></div>
+      <div class="profile-modal-hcp" id="profile-modal-hcp"></div>
+    </div>
+    <div class="profile-stats-row" id="profile-stats-row"></div>
+    <div class="profile-edit-section">
+      <div class="profile-section-title">Rediger profil</div>
+      <div class="setup-field">
+        <label class="setup-field-label">Navn</label>
+        <input type="text" class="setup-input" id="profile-edit-name" maxlength="40">
+      </div>
+      <div class="setup-row">
+        <div class="setup-field">
+          <label class="setup-field-label">Handicap</label>
+          <input type="number" class="setup-input" id="profile-edit-handicap" min="-10" max="54" step="0.1">
+        </div>
+        <div class="setup-field">
+          <label class="setup-field-label">Hjemklubb</label>
+          <input type="text" class="setup-input" id="profile-edit-homeclub" maxlength="40">
+        </div>
+      </div>
+      <button class="save-btn" onclick="saveProfile()">Lagre profil</button>
     </div>
   </div>
 </div>
@@ -1066,15 +1265,159 @@ const COURSES = [
   { id: 'longyearbyen', name: 'Longyearbyen Golfklubb', location: 'Longyearbyen, Svalbard', region: 'Nord-Norge', holes: 9, par: 36, type: 'Arktisk' },
 ];
 
-// Persist data
-function loadData() {
-  try { return JSON.parse(localStorage.getItem('golf_entries') || '{}'); } catch { return {}; }
+// ===================== PROFILES =====================
+function loadProfiles() {
+  try { return JSON.parse(localStorage.getItem('golf_profiles') || '[]'); } catch { return []; }
 }
-function saveData(data) {
-  localStorage.setItem('golf_entries', JSON.stringify(data));
+function saveProfiles(profiles) {
+  localStorage.setItem('golf_profiles', JSON.stringify(profiles));
+}
+function getActiveProfileId() { return localStorage.getItem('golf_active_profile'); }
+function setActiveProfileId(id) { localStorage.setItem('golf_active_profile', id); }
+function genId() { return 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2,6); }
+
+function getActiveProfile() {
+  const profiles = loadProfiles();
+  const id = getActiveProfileId();
+  return profiles.find(p => p.id === id) || profiles[0] || null;
 }
 
-let data = loadData();
+let setupPhoto = null;
+
+function handleSetupPhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    setupPhoto = ev.target.result;
+    const wrap = document.getElementById('setup-avatar-wrap');
+    wrap.innerHTML = `<img src="${setupPhoto}" alt="Profilbilde">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function createProfile() {
+  const name = document.getElementById('setup-name').value.trim();
+  if (!name) { document.getElementById('setup-name').focus(); return; }
+  const handicap = document.getElementById('setup-handicap').value || null;
+  const homeclub = document.getElementById('setup-homeclub').value.trim() || null;
+  const id = genId();
+  const profile = { id, name, handicap, homeclub, photo: setupPhoto, createdAt: new Date().toISOString().slice(0,10) };
+  const profiles = loadProfiles();
+  // Migrate legacy data if exists
+  const legacy = localStorage.getItem('golf_entries');
+  if (legacy && profiles.length === 0) {
+    localStorage.setItem('golf_entries_' + id, legacy);
+  }
+  profiles.push(profile);
+  saveProfiles(profiles);
+  setActiveProfileId(id);
+  startApp();
+}
+
+function getInitials(name) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+}
+
+function updateProfileBadge() {
+  const profile = getActiveProfile();
+  if (!profile) return;
+  const btn = document.getElementById('header-profile-btn');
+  const avatar = document.getElementById('header-avatar');
+  const nameEl = document.getElementById('header-profile-name');
+  btn.style.display = 'flex';
+  nameEl.textContent = profile.name.split(' ')[0];
+  if (profile.photo) {
+    avatar.innerHTML = `<img src="${profile.photo}" alt="">`;
+  } else {
+    avatar.textContent = getInitials(profile.name);
+  }
+}
+
+function openProfileModal() {
+  const profile = getActiveProfile();
+  if (!profile) return;
+  // Fill hero
+  const avatarLg = document.getElementById('profile-avatar-lg');
+  if (profile.photo) {
+    avatarLg.innerHTML = `<img src="${profile.photo}" alt="">`;
+  } else {
+    avatarLg.textContent = getInitials(profile.name);
+  }
+  document.getElementById('profile-modal-name').textContent = profile.name;
+  const hcpText = profile.handicap ? `HCP ${profile.handicap}` : '';
+  const clubText = profile.homeclub ? profile.homeclub : '';
+  document.getElementById('profile-modal-hcp').textContent = [hcpText, clubText].filter(Boolean).join(' · ');
+  // Stats
+  const played = COURSES.filter(c => data[c.id]?.played).length;
+  const ratings = COURSES.map(c => data[c.id]?.rating).filter(Boolean);
+  const avgRating = ratings.length ? (ratings.reduce((a,b) => a+b,0)/ratings.length).toFixed(1) : '–';
+  const scores = COURSES.map(c => data[c.id]?.bestScore).filter(Boolean).map(Number);
+  const bestScore = scores.length ? Math.min(...scores) : '–';
+  document.getElementById('profile-stats-row').innerHTML = `
+    <div class="profile-stat"><div class="profile-stat-val">${played}</div><div class="profile-stat-lbl">Spilt</div></div>
+    <div class="profile-stat"><div class="profile-stat-val">${avgRating}</div><div class="profile-stat-lbl">Snittrangering</div></div>
+    <div class="profile-stat"><div class="profile-stat-val">${bestScore}</div><div class="profile-stat-lbl">Beste score</div></div>
+  `;
+  // Edit fields
+  document.getElementById('profile-edit-name').value = profile.name;
+  document.getElementById('profile-edit-handicap').value = profile.handicap || '';
+  document.getElementById('profile-edit-homeclub').value = profile.homeclub || '';
+  document.getElementById('profile-modal-overlay').classList.add('open');
+}
+
+function closeProfileModal() {
+  document.getElementById('profile-modal-overlay').classList.remove('open');
+}
+
+function handleProfilePhotoChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const src = ev.target.result;
+    const profile = getActiveProfile();
+    if (!profile) return;
+    profile.photo = src;
+    const profiles = loadProfiles();
+    const idx = profiles.findIndex(p => p.id === profile.id);
+    if (idx >= 0) profiles[idx] = profile;
+    saveProfiles(profiles);
+    document.getElementById('profile-avatar-lg').innerHTML = `<img src="${src}" alt="">`;
+    updateProfileBadge();
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveProfile() {
+  const profile = getActiveProfile();
+  if (!profile) return;
+  const name = document.getElementById('profile-edit-name').value.trim();
+  if (!name) return;
+  profile.name = name;
+  profile.handicap = document.getElementById('profile-edit-handicap').value || null;
+  profile.homeclub = document.getElementById('profile-edit-homeclub').value.trim() || null;
+  const profiles = loadProfiles();
+  const idx = profiles.findIndex(p => p.id === profile.id);
+  if (idx >= 0) profiles[idx] = profile;
+  saveProfiles(profiles);
+  updateProfileBadge();
+  closeProfileModal();
+}
+
+// ===================== PERSIST DATA =====================
+function loadData() {
+  const profile = getActiveProfile();
+  const key = profile ? 'golf_entries_' + profile.id : 'golf_entries';
+  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; }
+}
+function saveData(data) {
+  const profile = getActiveProfile();
+  const key = profile ? 'golf_entries_' + profile.id : 'golf_entries';
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+let data = {};
 let currentId = null;
 let activeRegionSlug = null;
 let currentRating = 0;
@@ -1531,17 +1874,35 @@ function refreshSidebarItem(courseId) {
 }
 
 // Init
-buildSidebar();
-buildCourses();
-// Hide all regions except Østlandet on init
-REGION_ORDER.forEach(r => {
-  if (r !== 'Østlandet') {
-    const section = document.getElementById('section-' + regionSlug(r));
-    if (section) section.style.display = 'none';
+function startApp() {
+  document.getElementById('setup-overlay').classList.add('hidden');
+  data = loadData();
+  updateProfileBadge();
+  buildSidebar();
+  buildCourses();
+  REGION_ORDER.forEach(r => {
+    if (r !== 'Østlandet') {
+      const section = document.getElementById('section-' + regionSlug(r));
+      if (section) section.style.display = 'none';
+    }
+  });
+  activeRegionSlug = regionSlug('Østlandet');
+  updateStats('Østlandet');
+}
+
+function initApp() {
+  const profiles = loadProfiles();
+  if (profiles.length === 0) {
+    document.getElementById('setup-overlay').classList.remove('hidden');
+  } else {
+    if (!getActiveProfileId() || !profiles.find(p => p.id === getActiveProfileId())) {
+      setActiveProfileId(profiles[0].id);
+    }
+    startApp();
   }
-});
-activeRegionSlug = regionSlug('Østlandet');
-updateStats('Østlandet');
+}
+
+initApp();
 </script>
 </body>
 </html>
