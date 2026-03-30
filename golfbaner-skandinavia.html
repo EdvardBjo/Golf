@@ -570,6 +570,33 @@
       transition: width 0.4s ease;
     }
 
+    /* Top 3 favourite courses grid in summary view */
+    .summary-top3-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+    .summary-top3-grid .course-card {
+      font-size: 0.88em;
+    }
+    .summary-top3-grid .card-photo {
+      height: 120px;
+    }
+    .summary-top3-grid .card-photo-placeholder {
+      height: 120px;
+    }
+    @media (max-width: 900px) {
+      .summary-top3-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 580px) {
+      .summary-top3-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .top-courses-list { display: flex; flex-direction: column; gap: 8px; }
     .top-course-item {
       display: flex; align-items: center; gap: 12px;
@@ -2112,10 +2139,13 @@ function buildSummaryView() {
   const totalCourses = COURSES.length;
 
   // Top-rated courses (played, rating > 0, sorted by rating desc)
-  const topCourses = COURSES
+  const allTopCourses = COURSES
     .filter(c => data[c.id]?.played && data[c.id]?.rating > 0)
-    .sort((a, b) => (data[b.id].rating - data[a.id].rating) || (data[a.id].bestScore || 999) - (data[b.id].bestScore || 999))
-    .slice(0, 5);
+    .sort((a, b) => (data[b.id].rating - data[a.id].rating) || (data[a.id].bestScore || 999) - (data[b.id].bestScore || 999));
+
+  const top3 = allTopCourses.slice(0, 3);
+  // Show remaining top courses (after top3) in the list below
+  const remainingTopCourses = allTopCourses.slice(3, 8);
 
   // Best scores (played, has bestScore)
   const bestScores = COURSES
@@ -2139,8 +2169,8 @@ function buildSummaryView() {
       </div>`;
   }).join('');
 
-  const topCoursesHTML = topCourses.length > 0
-    ? topCourses.map(c => {
+  const topCoursesListHTML = remainingTopCourses.length > 0
+    ? remainingTopCourses.map(c => {
         const entry = data[c.id];
         const stars = '★'.repeat(entry.rating) + '☆'.repeat(5 - entry.rating);
         const scoreText = entry.bestScore ? `<span class="top-course-score">Score: ${entry.bestScore}</span>` : '';
@@ -2150,7 +2180,7 @@ function buildSummaryView() {
           ${scoreText}
         </div>`;
       }).join('')
-    : '<p style="color:var(--text-muted);font-size:0.85rem;">Ingen baner rangert ennå.</p>';
+    : (top3.length === 0 ? '<p style="color:var(--text-muted);font-size:0.85rem;">Ingen baner rangert ennå.</p>' : '');
 
   const bestScoresHTML = bestScores.length > 0
     ? bestScores.map(c => {
@@ -2165,6 +2195,12 @@ function buildSummaryView() {
 
   document.getElementById('summary-view').innerHTML = `
     <div class="summary-heading">Ditt golfliv</div>
+
+    ${top3.length > 0 ? `
+    <div class="summary-section-title">⭐ Topp ${top3.length} favorittbaner</div>
+    <div id="summary-top3-grid" class="summary-top3-grid"></div>
+    ` : ''}
+
     <div class="summary-grid">
       <div class="summary-card">
         <div class="summary-card-label">Spilte baner</div>
@@ -2186,12 +2222,25 @@ function buildSummaryView() {
     <div class="summary-section-title">Fremgang per region</div>
     ${regionProgressHTML}
 
+    ${top3.length > 0 && remainingTopCourses.length > 0 ? `
+    <div class="summary-section-title">Øvrige favoritter</div>
+    <div class="top-courses-list">${topCoursesListHTML}</div>
+    ` : top3.length === 0 ? `
     <div class="summary-section-title">Favorittbaner</div>
-    <div class="top-courses-list">${topCoursesHTML}</div>
+    <div class="top-courses-list">${topCoursesListHTML}</div>
+    ` : ''}
 
     <div class="summary-section-title">Beste scorer</div>
     <div class="top-courses-list">${bestScoresHTML}</div>
   `;
+
+  // Inject actual course cards (DOM elements) into the top3 grid
+  if (top3.length > 0) {
+    const grid = document.getElementById('summary-top3-grid');
+    if (grid) {
+      top3.forEach(course => grid.appendChild(buildCard(course)));
+    }
+  }
 }
 
 function refreshSidebarItem(courseId) {
