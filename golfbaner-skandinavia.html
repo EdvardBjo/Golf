@@ -141,6 +141,26 @@
     }
     .sidebar-list { padding: 0; }
 
+    /* Golfliv home button at top of sidebar */
+    .sidebar-home-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 13px 16px;
+      background: #f0f7f3;
+      color: var(--green-dark);
+      font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; user-select: none;
+      transition: background 0.15s;
+      border-bottom: 2px solid var(--green-border);
+    }
+    .sidebar-home-btn:hover { background: #dff0e8; }
+    .sidebar-home-btn.active {
+      background: var(--green-dark);
+      color: white;
+      border-bottom-color: transparent;
+    }
+    .sidebar-home-icon { font-size: 1rem; flex-shrink: 0; }
+    .sidebar-home-label { flex: 1; }
+
     .sidebar-region-header {
       display: flex;
       align-items: center;
@@ -1921,6 +1941,7 @@ function viewProfile(profileId) {
     if (section) section.style.display = 'none';
   });
   updateStats();
+  updateSidebarHomeBtn();
   renderFriendsList();
 }
 
@@ -1940,6 +1961,7 @@ function clearViewProfile() {
     }
   });
   updateStats('Østlandet');
+  updateSidebarHomeBtn();
   renderFriendsList();
 }
 
@@ -2363,9 +2385,60 @@ const REGION_ORDER = ['Østlandet', 'Vestlandet', 'Sørlandet', 'Trøndelag', 'N
 
 function regionSlug(r) { return r.toLowerCase().replace(/[^a-z]/g, '-'); }
 
+// Returns Norwegian possessive of a first name ("Lars" → "Lars'", "Edvard" → "Edvards")
+function possessiveOf(firstName) {
+  if (!firstName) return 'Ditt';
+  const last = firstName.slice(-1).toLowerCase();
+  if (['s', 'z', 'x'].includes(last)) return firstName + "'";
+  return firstName + 's';
+}
+
+// Returns the label for the golfliv section ("Edvards golfliv" / "Lars' golfliv")
+function getGolflivLabel() {
+  const profileId = viewingProfileId || getActiveProfileId();
+  const profile = loadProfiles().find(p => p.id === profileId);
+  const firstName = profile?.firstName || '';
+  return possessiveOf(firstName) + ' golfliv';
+}
+
+function updateSidebarHomeBtn() {
+  const btn = document.getElementById('sidebar-home-btn');
+  if (!btn) return;
+  btn.classList.toggle('active', activeRegionSlug === null);
+  const label = document.getElementById('sidebar-home-label');
+  if (label) label.textContent = getGolflivLabel();
+}
+
+function goToSummary() {
+  // Collapse all open regions
+  REGION_ORDER.forEach(r => {
+    const s = regionSlug(r);
+    const items = document.getElementById('sidebar-region-' + s);
+    const arrow = document.getElementById('arrow-' + s);
+    const section = document.getElementById('section-' + s);
+    if (items) items.style.display = 'none';
+    if (arrow) arrow.textContent = '▶';
+    if (section) section.style.display = 'none';
+  });
+  activeRegionSlug = null;
+  buildSummaryView();
+  document.getElementById('summary-view').classList.add('visible');
+  updateStats();
+  updateSidebarHomeBtn();
+}
+
 function buildSidebar() {
   const list = document.getElementById('sidebar-list');
   list.innerHTML = '';
+
+  // Home button — navigates to the golfliv summary
+  const homeBtn = document.createElement('div');
+  homeBtn.id = 'sidebar-home-btn';
+  homeBtn.className = 'sidebar-home-btn' + (activeRegionSlug === null ? ' active' : '');
+  homeBtn.innerHTML = `<span class="sidebar-home-icon">⛳</span><span class="sidebar-home-label" id="sidebar-home-label">${getGolflivLabel()}</span>`;
+  homeBtn.onclick = goToSummary;
+  list.appendChild(homeBtn);
+
   REGION_ORDER.forEach(region => {
     const courses = COURSES.filter(c => c.region === region);
     if (!courses.length) return;
@@ -2435,6 +2508,7 @@ function toggleRegionSidebar(slug) {
     buildSummaryView();
     document.getElementById('summary-view').classList.add('visible');
     updateStats();
+    updateSidebarHomeBtn();
     return;
   }
 
@@ -2442,6 +2516,7 @@ function toggleRegionSidebar(slug) {
   activeRegionSlug = slug;
   document.getElementById('summary-view').classList.remove('visible');
   updateStats(region);
+  updateSidebarHomeBtn();
 
   const items = document.getElementById('sidebar-region-' + slug);
   const arrow = document.getElementById('arrow-' + slug);
@@ -2511,7 +2586,7 @@ function buildSummaryView() {
     : '<p style="color:var(--text-muted);font-size:0.85rem;">Ingen score registrert ennå.</p>';
 
   document.getElementById('summary-view').innerHTML = `
-    <div class="summary-heading">Ditt golfliv</div>
+    <div class="summary-heading">${getGolflivLabel()}</div>
 
     ${top3.length > 0 ? `
     <div class="summary-section-title">⭐ Topp ${top3.length} favorittbaner</div>
