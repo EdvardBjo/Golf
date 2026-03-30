@@ -608,6 +608,66 @@
     .top-course-name { font-weight: 600; font-size: 0.9rem; color: var(--green-dark); flex: 1; }
     .top-course-score { font-size: 0.78rem; font-weight: 700; color: #b8860b; }
 
+    /* VIEW PROFILE BANNER */
+    #view-banner {
+      background: linear-gradient(90deg, #1a4a2e 0%, #2d7a4f 100%);
+      color: white; padding: 10px 24px;
+    }
+    .view-banner-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .view-banner-avatar {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; font-weight: 800; overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+    .view-banner-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .view-banner-text { flex: 1; }
+    .view-banner-label { opacity: 0.75; font-size: 0.8rem; }
+    .view-banner-text strong { font-size: 1rem; }
+    .view-banner-sub { font-size: 0.75rem; opacity: 0.65; margin-top: 1px; }
+    .view-banner-back {
+      background: white; color: var(--green-dark);
+      border: none; border-radius: 20px;
+      padding: 8px 18px; font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; white-space: nowrap; transition: background 0.15s;
+    }
+    .view-banner-back:hover { background: #e8f5e9; }
+
+    /* FRIEND ITEMS — clickable */
+    .friend-item {
+      cursor: pointer; transition: background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    .friend-item:hover { background: var(--green-light); }
+    .friend-item.viewing {
+      background: #e8f5e9;
+      border-left-color: var(--green-mid);
+    }
+
+    /* MODAL VIEW-MODE (read-only when viewing a friend) */
+    .modal-overlay.view-mode .played-toggle { pointer-events: none; opacity: 0.8; }
+    .modal-overlay.view-mode .tee-btn { pointer-events: none; }
+    .modal-overlay.view-mode .star { pointer-events: none; }
+    .modal-overlay.view-mode #modal-best-score {
+      pointer-events: none; background: #f5f5f5; border-color: #e0e0e0;
+    }
+    .modal-overlay.view-mode #modal-notes {
+      pointer-events: none; background: #f5f5f5; border-color: #e0e0e0; resize: none;
+    }
+    .modal-overlay.view-mode .photo-upload-area { display: none; }
+    .modal-overlay.view-mode .save-btn { display: none; }
+    .modal-view-badge {
+      display: none; margin-bottom: 12px;
+      background: #e8f5e9; color: var(--green-dark);
+      border-radius: 20px; padding: 5px 14px;
+      font-size: 0.78rem; font-weight: 700;
+    }
+    .modal-overlay.view-mode .modal-view-badge { display: inline-block; }
+
     /* PROFILE SETUP OVERLAY */
     #setup-overlay {
       position: fixed; inset: 0; z-index: 500;
@@ -1141,6 +1201,17 @@
   </div>
 </div>
 
+<div id="view-banner" style="display:none">
+  <div class="view-banner-inner">
+    <div class="view-banner-avatar" id="view-banner-avatar"></div>
+    <div class="view-banner-text">
+      <div><span class="view-banner-label">Du ser på</span> <strong id="view-banner-name"></strong></div>
+      <div class="view-banner-sub" id="view-banner-sub"></div>
+    </div>
+    <button class="view-banner-back" onclick="clearViewProfile()">← Min profil</button>
+  </div>
+</div>
+
 <div class="page-body">
   <aside class="sidebar">
     <div class="sidebar-list" id="sidebar-list"></div>
@@ -1170,6 +1241,8 @@
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
+
+      <div class="modal-view-badge" id="modal-view-badge">👁 Du ser på en venns data</div>
 
       <div>
         <div class="played-toggle" id="played-toggle" onclick="togglePlayed()">
@@ -1816,6 +1889,60 @@ function ensureTestFriends() {
   }
 }
 
+// ===================== VIEW PROFILE =====================
+function viewProfile(profileId) {
+  if (viewingProfileId === profileId) return; // already viewing
+  viewingProfileId = profileId;
+  const profile = loadProfiles().find(p => p.id === profileId);
+  if (!profile) return;
+
+  // Load friend's data into global data
+  try { data = JSON.parse(localStorage.getItem('golf_entries_' + profileId) || '{}'); }
+  catch { data = {}; }
+
+  // Update view banner
+  const avatarEl = document.getElementById('view-banner-avatar');
+  avatarEl.innerHTML = profile.photo
+    ? `<img src="${profile.photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+    : getInitials(profile);
+  document.getElementById('view-banner-name').textContent = fullName(profile);
+  const hcp = profile.handicap ? `HCP ${profile.handicap}` : '';
+  const club = profile.homeclub || '';
+  document.getElementById('view-banner-sub').textContent = [hcp, club].filter(Boolean).join(' · ');
+  document.getElementById('view-banner').style.display = '';
+
+  // Reset to summary view showing friend's golfliv
+  activeRegionSlug = null;
+  buildCourses();
+  buildSummaryView();
+  document.getElementById('summary-view').classList.add('visible');
+  REGION_ORDER.forEach(r => {
+    const section = document.getElementById('section-' + regionSlug(r));
+    if (section) section.style.display = 'none';
+  });
+  updateStats();
+  renderFriendsList();
+}
+
+function clearViewProfile() {
+  viewingProfileId = null;
+  data = loadData(); // restore own data
+
+  document.getElementById('view-banner').style.display = 'none';
+
+  // Restore own view: Østlandet open, summary hidden
+  activeRegionSlug = regionSlug('Østlandet');
+  buildCourses();
+  REGION_ORDER.forEach(r => {
+    if (r !== 'Østlandet') {
+      const section = document.getElementById('section-' + regionSlug(r));
+      if (section) section.style.display = 'none';
+    }
+  });
+  updateStats('Østlandet');
+  renderFriendsList();
+}
+
 function getFriendIds() {
   const profile = getActiveProfile();
   return profile?.friends || [];
@@ -1887,19 +2014,17 @@ function renderFriendsList() {
     return;
   }
   listEl.innerHTML = friends.map(p => {
-    const avatarHtml = p.photo
-      ? `<img src="${p.photo}" alt="">`
-      : getInitials(p);
     const hcp = p.handicap ? `HCP ${p.handicap}` : '';
     const club = p.homeclub || '';
     const sub = [hcp, club].filter(Boolean).join(' · ');
-    return `<div class="friend-item">
+    const isViewing = viewingProfileId === p.id;
+    return `<div class="friend-item${isViewing ? ' viewing' : ''}" onclick="viewProfile('${p.id}')">
       <div class="friend-avatar">${p.photo ? `<img src="${p.photo}" alt="">` : getInitials(p)}</div>
       <div class="friend-info">
         <div class="friend-name">${fullName(p)}</div>
         ${sub ? `<div class="friend-sub">${sub}</div>` : ''}
       </div>
-      <button class="friend-remove-btn" onclick="removeFriend('${p.id}')" title="Fjern venn">✕</button>
+      <button class="friend-remove-btn" onclick="event.stopPropagation();removeFriend('${p.id}')" title="Fjern venn">✕</button>
     </div>`;
   }).join('');
 }
@@ -1932,6 +2057,7 @@ let data = {};
 let currentId = null;
 let activeRegionSlug = null;
 let currentRating = 0;
+let viewingProfileId = null;
 let currentPhotos = [];
 let currentTee = null;
 
@@ -2100,8 +2226,18 @@ function openModal(id) {
   renderStars();
   renderPhotoThumbs();
 
-  document.getElementById('modal-overlay').classList.add('open');
+  // View-mode: read-only when browsing a friend's profile
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.toggle('view-mode', !!viewingProfileId);
+  overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
+  // Update the view badge with the friend's name
+  if (viewingProfileId) {
+    const friend = loadProfiles().find(p => p.id === viewingProfileId);
+    if (friend) {
+      document.getElementById('modal-view-badge').textContent = '👁 ' + fullName(friend) + 's opplevelse';
+    }
+  }
 }
 
 function closeModal() {
