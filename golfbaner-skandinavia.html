@@ -208,6 +208,28 @@
       padding-bottom: 8px;
       border-bottom: 2px solid var(--green-border);
     }
+    .courses-sub-heading {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 18px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .courses-sub-heading.played-heading { color: var(--green-mid); }
+    .courses-sub-heading.unplayed-heading { color: var(--text-muted); }
+    .courses-sub-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--green-border);
+    }
+    .courses-sub-heading .sub-count {
+      font-weight: 400;
+      opacity: 0.7;
+    }
 
     .courses-grid {
       display: grid;
@@ -1724,22 +1746,48 @@ function getRegions() {
 }
 
 
+function buildRegionSection(region) {
+  const courses = COURSES.filter(c => c.region === region);
+  const played = courses.filter(c => data[c.id]?.played);
+  const unplayed = courses.filter(c => !data[c.id]?.played);
+
+  const section = document.createElement('div');
+  section.className = 'region-section';
+  section.dataset.region = region;
+  section.id = 'section-' + regionSlug(region);
+  section.innerHTML = `<div class="region-title">${region}</div>`;
+
+  if (played.length > 0) {
+    const heading = document.createElement('div');
+    heading.className = 'courses-sub-heading played-heading';
+    heading.innerHTML = `Spilt <span class="sub-count">(${played.length})</span>`;
+    section.appendChild(heading);
+    const grid = document.createElement('div');
+    grid.className = 'courses-grid';
+    played.forEach(c => grid.appendChild(buildCard(c)));
+    section.appendChild(grid);
+  }
+
+  const unplayedHeading = document.createElement('div');
+  unplayedHeading.className = 'courses-sub-heading unplayed-heading';
+  unplayedHeading.innerHTML = played.length > 0
+    ? `Ikke spilt <span class="sub-count">(${unplayed.length})</span>`
+    : `Baner <span class="sub-count">(${unplayed.length})</span>`;
+  section.appendChild(unplayedHeading);
+
+  const unplayedGrid = document.createElement('div');
+  unplayedGrid.className = 'courses-grid';
+  unplayed.forEach(c => unplayedGrid.appendChild(buildCard(c)));
+  section.appendChild(unplayedGrid);
+
+  return section;
+}
+
 function buildCourses() {
   const main = document.getElementById('main');
   main.innerHTML = '<div id="summary-view"></div>';
   REGION_ORDER.filter(r => COURSES.some(c => c.region === r)).forEach(region => {
-    const section = document.createElement('div');
-    section.className = 'region-section';
-    section.dataset.region = region;
-    section.id = 'section-' + regionSlug(region);
-    section.innerHTML = `<div class="region-title">${region}</div>`;
-    const grid = document.createElement('div');
-    grid.className = 'courses-grid';
-    COURSES.filter(c => c.region === region).forEach(c => {
-      grid.appendChild(buildCard(c));
-    });
-    section.appendChild(grid);
-    main.appendChild(section);
+    main.appendChild(buildRegionSection(region));
   });
 }
 
@@ -1787,9 +1835,15 @@ function buildCard(course) {
 
 function refreshCard(courseId) {
   const course = COURSES.find(c => c.id === courseId);
-  const old = document.getElementById('card-' + courseId);
-  const newCard = buildCard(course);
-  old.replaceWith(newCard);
+  // Rebuild the whole region section so card moves to correct played/unplayed group
+  const slug = regionSlug(course.region);
+  const oldSection = document.getElementById('section-' + slug);
+  const wasVisible = oldSection && oldSection.style.display !== 'none';
+  const newSection = buildRegionSection(course.region);
+  if (oldSection) {
+    if (!wasVisible) newSection.style.display = 'none';
+    oldSection.replaceWith(newSection);
+  }
   refreshSidebarItem(courseId);
 }
 
