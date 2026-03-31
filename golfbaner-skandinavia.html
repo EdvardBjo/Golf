@@ -1653,7 +1653,7 @@
         <span class="nav-tab-icon">📰</span> Feed
       </button>
       <button class="nav-tab" id="nav-tab-golfliv" onclick="switchTab('golfliv')">
-        <span class="nav-tab-icon">⛳</span> Mitt golfliv
+        <span class="nav-tab-icon">🚩</span> My Flags
       </button>
       <button class="nav-tab" id="nav-tab-news" onclick="switchTab('news')">
         <span class="nav-tab-icon">🗞️</span> Nyheter
@@ -2998,12 +2998,14 @@ function possessiveOf(firstName) {
   return firstName + 's';
 }
 
-// Returns the label for the golfliv section ("Edvards golfliv" / "Lars' golfliv")
+// Returns the label for the My Flags section ("Edvard's Flags" / "Lars' Flags")
 function getGolflivLabel() {
   const profileId = viewingProfileId || getActiveProfileId();
   const profile = loadProfiles().find(p => p.id === profileId);
-  const firstName = profile?.firstName || '';
-  return possessiveOf(firstName) + ' golfliv';
+  const first = profile?.firstName || '';
+  if (!first) return 'My Flags';
+  const last = first.slice(-1).toLowerCase();
+  return first + (['s','z','x'].includes(last) ? "'" : "'s") + ' Flags';
 }
 
 function updateSidebarHomeBtn() {
@@ -3040,7 +3042,7 @@ function buildSidebar() {
   const homeBtn = document.createElement('div');
   homeBtn.id = 'sidebar-home-btn';
   homeBtn.className = 'sidebar-home-btn' + (activeRegionSlug === null ? ' active' : '');
-  homeBtn.innerHTML = `<span class="sidebar-home-icon">⛳</span><span class="sidebar-home-label" id="sidebar-home-label">${getGolflivLabel()}</span>`;
+  homeBtn.innerHTML = `<span class="sidebar-home-icon">🚩</span><span class="sidebar-home-label" id="sidebar-home-label">${getGolflivLabel()}</span>`;
   homeBtn.onclick = goToSummary;
   list.appendChild(homeBtn);
 
