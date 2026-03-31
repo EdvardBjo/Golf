@@ -1626,12 +1626,12 @@
       </div>
       <div class="new-post-score-row">
         <div>
-          <div class="field-label">Score</div>
+          <div class="field-label">Score <span style="font-weight:400;color:var(--text-muted)">(valgfritt)</span></div>
           <input type="number" class="date-input" id="new-post-score"
             placeholder="f.eks. 82" min="50" max="200">
         </div>
         <div>
-          <div class="field-label">Teeboks</div>
+          <div class="field-label">Teeboks <span style="font-weight:400;color:var(--text-muted)">(valgfritt)</span></div>
           <div class="tee-selector" id="new-post-tee-selector" style="flex-wrap:wrap"></div>
         </div>
       </div>
@@ -3587,7 +3587,7 @@ function handleNewPostPhoto(event) {
 function submitNewPost() {
   const caption = document.getElementById('new-post-caption').value.trim();
   const score = parseInt(document.getElementById('new-post-score').value) || null;
-  if (!caption && !score && !newPostSelectedCourseId) return;
+  if (!caption && !newPostSelectedCourseId) return; // minimum: bane eller tekst
   const profile = getActiveProfile();
   const post = {
     id: 'post_' + genId(),
