@@ -628,6 +628,173 @@
     .top-course-name { font-weight: 600; font-size: 0.9rem; color: var(--green-dark); flex: 1; }
     .top-course-score { font-size: 0.78rem; font-weight: 700; color: #b8860b; }
 
+    /* ===================== MAIN NAV TABS ===================== */
+    .main-nav {
+      background: white;
+      border-bottom: 2px solid var(--green-border);
+      position: sticky; top: 0; z-index: 90;
+    }
+    .main-nav-inner {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 24px; display: flex; gap: 0;
+    }
+    .nav-tab {
+      display: flex; align-items: center; gap: 7px;
+      padding: 14px 22px;
+      border: none; background: none;
+      font-size: 0.88rem; font-weight: 700;
+      color: var(--text-muted); cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px; transition: all 0.15s;
+    }
+    .nav-tab:hover { color: var(--green-dark); }
+    .nav-tab.active { color: var(--green-dark); border-bottom-color: var(--green-mid); }
+    .nav-tab-icon { font-size: 1rem; }
+
+    /* ===================== FEED ===================== */
+    #feed-view {
+      display: none;
+      padding: 20px 0 40px;
+    }
+    .feed-create-bar {
+      display: flex; align-items: center; gap: 12px;
+      background: white; border-radius: 14px;
+      padding: 12px 16px; margin-bottom: 20px;
+      box-shadow: var(--shadow); cursor: pointer;
+      transition: box-shadow 0.15s;
+    }
+    .feed-create-bar:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+    .feed-create-avatar {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      background: var(--green-mid); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800; overflow: hidden;
+    }
+    .feed-create-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .feed-create-prompt {
+      flex: 1; color: var(--text-muted); font-size: 0.9rem;
+      background: var(--green-light); border-radius: 20px;
+      padding: 9px 16px;
+    }
+    .feed-create-btn {
+      background: var(--green-mid); color: white;
+      border: none; border-radius: 20px;
+      padding: 9px 18px; font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; white-space: nowrap; transition: background 0.15s;
+    }
+    .feed-create-btn:hover { background: var(--green-dark); }
+
+    .feed-container { display: flex; flex-direction: column; gap: 18px; }
+
+    .feed-post {
+      background: white; border-radius: 14px;
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .post-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px 10px;
+    }
+    .post-avatar {
+      width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+      background: var(--green-mid); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800; overflow: hidden; cursor: pointer;
+    }
+    .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .post-meta { flex: 1; min-width: 0; }
+    .post-author {
+      font-weight: 700; font-size: 0.92rem; color: var(--green-dark);
+      cursor: pointer; display: inline;
+    }
+    .post-author:hover { text-decoration: underline; }
+    .post-course-tag {
+      display: inline-block;
+      background: var(--green-light); color: var(--green-dark);
+      border-radius: 10px; padding: 1px 8px;
+      font-size: 0.72rem; font-weight: 700; margin-left: 6px;
+      vertical-align: middle;
+    }
+    .post-sub { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+    .post-time { font-size: 0.75rem; color: var(--text-muted); flex-shrink: 0; white-space: nowrap; }
+    .post-photo { width: 100%; max-height: 420px; object-fit: cover; display: block; }
+    .post-score-strip {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px;
+      background: linear-gradient(90deg, #f0f7f3, #ffffff);
+      border-top: 1px solid var(--green-border);
+      border-bottom: 1px solid var(--green-border);
+    }
+    .post-score-number { font-size: 1.5rem; font-weight: 900; color: var(--green-dark); }
+    .post-score-diff {
+      font-size: 0.78rem; font-weight: 800;
+      padding: 3px 9px; border-radius: 10px; flex-shrink: 0;
+    }
+    .post-score-diff.over  { background: #fff3e0; color: #e65100; }
+    .post-score-diff.under { background: #e8f5e9; color: #2e7d32; }
+    .post-score-diff.even  { background: #e3f2fd; color: #1565c0; }
+    .post-score-meta { font-size: 0.8rem; color: var(--text-muted); }
+    .post-caption { padding: 10px 16px 4px; font-size: 0.9rem; line-height: 1.55; color: var(--text); }
+    .post-actions { display: flex; gap: 2px; padding: 6px 10px 12px; }
+    .post-action-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 7px 14px; border: none; background: none;
+      font-size: 0.84rem; color: var(--text-muted);
+      cursor: pointer; border-radius: 8px; transition: all 0.15s;
+    }
+    .post-action-btn:hover { background: var(--green-light); color: var(--green-dark); }
+    .post-action-btn.liked { color: #e53935; }
+    .action-count { font-weight: 700; }
+
+    /* New post modal */
+    #new-post-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    #new-post-overlay.open { opacity: 1; pointer-events: all; }
+    .new-post-modal {
+      background: white; border-radius: 18px;
+      width: 100%; max-width: 500px; max-height: 90vh;
+      overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .new-post-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--green-border);
+    }
+    .new-post-header h3 { font-size: 1rem; font-weight: 800; color: var(--green-dark); margin: 0; }
+    .new-post-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 16px; }
+    .new-post-course-search {
+      width: 100%; padding: 10px 14px;
+      border: 2px solid var(--green-border); border-radius: 10px;
+      font-size: 0.88rem; outline: none; transition: border-color 0.15s; box-sizing: border-box;
+    }
+    .new-post-course-search:focus { border-color: var(--green-mid); }
+    .course-suggestions {
+      max-height: 160px; overflow-y: auto;
+      border: 2px solid var(--green-border); border-radius: 10px;
+      display: none;
+    }
+    .course-suggestions.visible { display: block; }
+    .course-suggestion-item {
+      padding: 9px 14px; cursor: pointer; font-size: 0.85rem;
+      transition: background 0.1s; border-bottom: 1px solid var(--green-border);
+    }
+    .course-suggestion-item:last-child { border-bottom: none; }
+    .course-suggestion-item:hover { background: var(--green-light); }
+    .course-suggestion-item.selected { background: var(--green-light); font-weight: 700; }
+    .new-post-score-row { display: flex; gap: 12px; }
+    .new-post-score-row > div { flex: 1; }
+    .new-post-submit {
+      width: 100%; padding: 13px;
+      background: var(--green-mid); color: white;
+      border: none; border-radius: 10px;
+      font-size: 0.95rem; font-weight: 800; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .new-post-submit:hover { background: var(--green-dark); }
+
     /* FELLES BANER — shared courses with friends */
     .felles-item {
       display: flex; align-items: center; gap: 12px;
@@ -1259,7 +1426,18 @@
   </div>
 </header>
 
-<div class="stats-bar" id="stats-bar">
+<nav class="main-nav" id="main-nav">
+  <div class="main-nav-inner">
+    <button class="nav-tab active" id="nav-tab-feed" onclick="switchTab('feed')">
+      <span class="nav-tab-icon">📰</span> Feed
+    </button>
+    <button class="nav-tab" id="nav-tab-golfliv" onclick="switchTab('golfliv')">
+      <span class="nav-tab-icon">⛳</span> Mitt golfliv
+    </button>
+  </div>
+</nav>
+
+<div class="stats-bar" id="stats-bar" style="display:none">
   <div class="stat-region-label" id="stat-region-label"></div>
   <div class="stat">
     <div class="stat-number" id="stat-played">0</div>
@@ -1291,6 +1469,14 @@
     <div class="sidebar-list" id="sidebar-list"></div>
   </aside>
   <main id="main">
+    <div id="feed-view">
+      <div class="feed-create-bar" onclick="openNewPostModal()">
+        <div class="feed-create-avatar" id="feed-create-avatar"></div>
+        <div class="feed-create-prompt">Hva spilte du i dag?</div>
+        <button class="feed-create-btn">⛳ Del runde</button>
+      </div>
+      <div class="feed-container" id="feed-container"></div>
+    </div>
     <div id="summary-view"></div>
   </main>
   <aside class="friends-panel" id="friends-panel" style="display:none">
@@ -1305,6 +1491,53 @@
 </div>
 
 <!-- MODAL -->
+<!-- NEW POST MODAL -->
+<div id="new-post-overlay" onclick="handleNewPostOverlayClick(event)">
+  <div class="new-post-modal" id="new-post-modal">
+    <div class="new-post-header">
+      <h3>⛳ Del en runde</h3>
+      <button class="modal-close" onclick="closeNewPostModal()">✕</button>
+    </div>
+    <div class="new-post-body">
+      <div>
+        <div class="field-label">Bane</div>
+        <input type="text" class="new-post-course-search" id="new-post-course-input"
+          placeholder="Søk etter bane..." autocomplete="off"
+          oninput="filterCourseSuggestions(this.value)">
+        <div class="course-suggestions" id="course-suggestions"></div>
+        <input type="hidden" id="new-post-course-id">
+      </div>
+      <div class="new-post-score-row">
+        <div>
+          <div class="field-label">Score</div>
+          <input type="number" class="date-input" id="new-post-score"
+            placeholder="f.eks. 82" min="50" max="200">
+        </div>
+        <div>
+          <div class="field-label">Teeboks</div>
+          <div class="tee-selector" id="new-post-tee-selector" style="flex-wrap:wrap"></div>
+        </div>
+      </div>
+      <div>
+        <div class="field-label">Hva vil du dele?</div>
+        <textarea class="notes-textarea" id="new-post-caption"
+          placeholder="Hvordan var runden? Spesielle øyeblikk? 🏌️"></textarea>
+      </div>
+      <div>
+        <div class="field-label">Bilde (valgfritt)</div>
+        <div class="photo-upload-area" onclick="document.getElementById('new-post-photo-input').click()">
+          <div class="upload-icon">📷</div>
+          <p>Trykk for å legge til bilde</p>
+        </div>
+        <input type="file" id="new-post-photo-input" accept="image/*" style="display:none"
+          onchange="handleNewPostPhoto(event)">
+        <div id="new-post-photo-preview" style="margin-top:8px"></div>
+      </div>
+      <button class="new-post-submit" onclick="submitNewPost()">Del runde</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal" id="modal">
     <div class="modal-header">
@@ -2134,6 +2367,10 @@ let currentId = null;
 let activeRegionSlug = null;
 let currentRating = 0;
 let viewingProfileId = null;
+let currentTab = 'feed';
+let newPostSelectedCourseId = null;
+let newPostPhotoData = null;
+let newPostCurrentTee = null;
 let currentPhotos = [];
 let currentTee = null;
 
@@ -2195,10 +2432,18 @@ function buildRegionSection(region) {
 
 function buildCourses() {
   const main = document.getElementById('main');
+  const feedView = document.getElementById('feed-view'); // preserve across innerHTML wipe
   main.innerHTML = '<div id="summary-view"></div>';
   REGION_ORDER.filter(r => COURSES.some(c => c.region === r)).forEach(region => {
     main.appendChild(buildRegionSection(region));
   });
+  if (feedView) main.appendChild(feedView);
+  // Hide golfliv content if feed tab is active
+  if (currentTab === 'feed') {
+    Array.from(main.children).forEach(el => {
+      if (el.id !== 'feed-view') el.style.display = 'none';
+    });
+  }
 }
 
 function buildCard(course) {
@@ -2779,15 +3024,283 @@ function refreshSidebarItem(courseId) {
   if (countEl) countEl.textContent = `${playedCount}/${courses.length}`;
 }
 
+// ===================== FEED =====================
+
+function loadFeedPosts() {
+  try { return JSON.parse(localStorage.getItem('golf_feed') || '[]'); } catch { return []; }
+}
+function saveFeedPosts(posts) { localStorage.setItem('golf_feed', JSON.stringify(posts)); }
+
+function timeAgo(ts) {
+  const diff = Date.now() - new Date(ts).getTime();
+  const m = Math.floor(diff / 60000);
+  const h = Math.floor(diff / 3600000);
+  const d = Math.floor(diff / 86400000);
+  if (m < 1)  return 'nå nettopp';
+  if (m < 60) return `${m} min siden`;
+  if (h < 24) return `${h} time${h > 1 ? 'r' : ''} siden`;
+  if (d < 7)  return `${d} dag${d > 1 ? 'er' : ''} siden`;
+  const w = Math.floor(d / 7);
+  return `${w} uke${w > 1 ? 'r' : ''} siden`;
+}
+
+function seedTestPosts() {
+  if (localStorage.getItem('golf_feed_seeded')) return;
+  const n = Date.now();
+  const h = s => new Date(n - s * 3600000).toISOString();
+  const d = s => new Date(n - s * 86400000).toISOString();
+  const posts = [
+    { id:'post_001', authorId:'test_lars_eriksen',    courseId:'oslo-gk',    score:79,  tee:'5800m', caption:'Drømmende dag på Bogstad! Formen er på vei tilbake 💪', photo:null, likes:['test_kjetil_andersen','test_marte_johansen'], comments:[], timestamp:h(1.5) },
+    { id:'post_002', authorId:'test_kjetil_andersen', courseId:'sola',       score:71,  tee:null,    caption:'Under par på Sola! Linksbanen er et eventyr i stille vær 🏆', photo:null, likes:['test_lars_eriksen','test_ole_kristiansen','test_tor_olsen'], comments:[], timestamp:h(4) },
+    { id:'post_003', authorId:'test_marte_johansen',  courseId:'haga',       score:96,  tee:null,    caption:'Strålende dag på Haga med venninnene! Banen var i perfekt stand ☀️', photo:null, likes:['test_silje_berg','test_anette_larsen','test_ingrid_haugen'], comments:[], timestamp:d(1) },
+    { id:'post_004', authorId:'test_ole_kristiansen', courseId:'grini',      score:69,  tee:null,    caption:'Ny personlig rekord på Grini! 3 under par. Ukens beste runde uten tvil 🎉', photo:null, likes:['test_lars_eriksen','test_kjetil_andersen','test_henrik_dahl','test_tor_olsen'], comments:[], timestamp:d(1) },
+    { id:'post_005', authorId:'test_stian_paulsen',   courseId:'miklagard',  score:88,  tee:'III',   caption:'Alltid godt å spille hjemmebanen. Miklagard er i superform nå 🌿', photo:null, likes:['test_lars_eriksen','test_henrik_dahl'], comments:[], timestamp:d(2) },
+    { id:'post_006', authorId:'test_silje_berg',      courseId:'gronmo',     score:93,  tee:null,    caption:'Krevende men nydelig skogsbane. Grønmo er alltid en opplevelse!', photo:null, likes:['test_marte_johansen','test_stian_paulsen'], comments:[], timestamp:d(3) },
+    { id:'post_007', authorId:'test_ingrid_haugen',   courseId:'bergen',     score:102, tee:null,    caption:'Nydelig utsikt fra 18. hull på Bergen GK. Vestlandet på sitt beste! 🏔️', photo:null, likes:['test_marte_johansen','test_tor_olsen'], comments:[], timestamp:d(3) },
+    { id:'post_008', authorId:'test_henrik_dahl',     courseId:'kjekstad',   score:81,  tee:null,    caption:'Ny rekord på Kjekstad! Takk til gutta for god stemning på banen 🙌', photo:null, likes:['test_stian_paulsen','test_lars_eriksen','test_ole_kristiansen'], comments:[], timestamp:d(4) },
+    { id:'post_009', authorId:'test_tor_olsen',       courseId:'sola',       score:82,  tee:null,    caption:'Linksbane på sitt beste i strålende sol. Rogaland har Norges beste golfbaner.', photo:null, likes:['test_kjetil_andersen','test_lars_eriksen'], comments:[], timestamp:d(5) },
+    { id:'post_010', authorId:'test_lars_eriksen',    courseId:'grini',      score:78,  tee:null,    caption:'Kanskje den beste banen på Østlandet? Grini imponerer alltid.', photo:null, likes:['test_ole_kristiansen','test_henrik_dahl','test_stian_paulsen'], comments:[], timestamp:d(7) },
+    { id:'post_011', authorId:'test_kjetil_andersen', courseId:'haga',       score:73,  tee:null,    caption:'Quick 9 med gutta. Haga er alltid verdt turen!', photo:null, likes:['test_lars_eriksen','test_henrik_dahl'], comments:[], timestamp:d(8) },
+    { id:'post_012', authorId:'test_anette_larsen',   courseId:'lommedalen', score:82,  tee:'Rød',   caption:'Første gangen under 85! Lommedalen, du er fantastisk 🎉🎉', photo:null, likes:['test_marte_johansen','test_silje_berg','test_ingrid_haugen','test_stian_paulsen'], comments:[], timestamp:d(10) },
+    { id:'post_013', authorId:'test_ole_kristiansen', courseId:'oslo-gk',    score:70,  tee:'6100m', caption:'Tilbake på Bogstad. Som å komme hjem. Perfekt greenstempo i dag.', photo:null, likes:['test_lars_eriksen','test_kjetil_andersen','test_silje_berg'], comments:[], timestamp:d(14) },
+  ];
+  saveFeedPosts(posts);
+  localStorage.setItem('golf_feed_seeded', '1');
+}
+
+function buildFeedPostHTML(post, profiles, activeId) {
+  const author = profiles.find(p => p.id === post.authorId);
+  if (!author) return '';
+  const course = COURSES.find(c => c.id === post.courseId);
+  const liked = (post.likes || []).includes(activeId);
+
+  const avatarHTML = author.photo
+    ? `<img src="${author.photo}" alt="">`
+    : getInitials(author);
+
+  let scoreStrip = '';
+  if (post.score && course) {
+    const diff = post.score - course.par;
+    const diffText = diff === 0 ? 'E' : (diff > 0 ? '+' + diff : String(diff));
+    const diffCls  = diff === 0 ? 'even' : (diff > 0 ? 'over' : 'under');
+    const teeText  = post.tee ? ` · Tee: ${post.tee}` : '';
+    scoreStrip = `<div class="post-score-strip">
+      <span class="post-score-number">${post.score}</span>
+      <span class="post-score-diff ${diffCls}">${diffText}</span>
+      <span class="post-score-meta">Par ${course.par}${teeText}</span>
+    </div>`;
+  }
+
+  return `<div class="feed-post" id="post-${post.id}">
+    <div class="post-header">
+      <div class="post-avatar" onclick="viewProfile('${author.id}');switchTab('golfliv')">${avatarHTML}</div>
+      <div class="post-meta">
+        <div>
+          <span class="post-author" onclick="viewProfile('${author.id}');switchTab('golfliv')">${fullName(author)}</span>
+          ${course ? `<span class="post-course-tag">📍 ${course.name}</span>` : ''}
+        </div>
+        <div class="post-sub">HCP ${author.handicap || '–'} · ${author.homeclub || ''}</div>
+      </div>
+      <div class="post-time">${timeAgo(post.timestamp)}</div>
+    </div>
+    ${post.photo ? `<img class="post-photo" src="${post.photo}" alt="">` : ''}
+    ${scoreStrip}
+    ${post.caption ? `<div class="post-caption">${post.caption}</div>` : ''}
+    <div class="post-actions">
+      <button class="post-action-btn ${liked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+        ${liked ? '❤️' : '🤍'} <span class="action-count">${(post.likes || []).length}</span>
+      </button>
+      <button class="post-action-btn">💬 <span class="action-count">${(post.comments || []).length}</span></button>
+    </div>
+  </div>`;
+}
+
+function buildFeed() {
+  const container = document.getElementById('feed-container');
+  if (!container) return;
+  const posts = loadFeedPosts().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  const profiles = loadProfiles();
+  const activeId = getActiveProfileId();
+
+  // Update create-bar avatar
+  const profile = getActiveProfile();
+  const avatarEl = document.getElementById('feed-create-avatar');
+  if (avatarEl && profile) {
+    avatarEl.innerHTML = profile.photo
+      ? `<img src="${profile.photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+      : getInitials(profile);
+  }
+
+  container.innerHTML = posts.length > 0
+    ? posts.map(p => buildFeedPostHTML(p, profiles, activeId)).join('')
+    : `<div style="text-align:center;padding:40px 20px;color:var(--text-muted)">
+        <div style="font-size:2.5rem;margin-bottom:12px">⛳</div>
+        <div style="font-weight:700;margin-bottom:6px">Ingen innlegg ennå</div>
+        <div style="font-size:0.85rem">Del din første runde ovenfor!</div>
+       </div>`;
+}
+
+function toggleLike(postId) {
+  const posts = loadFeedPosts();
+  const activeId = getActiveProfileId();
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  const idx = (post.likes || []).indexOf(activeId);
+  if (idx >= 0) post.likes.splice(idx, 1);
+  else { post.likes = post.likes || []; post.likes.push(activeId); }
+  saveFeedPosts(posts);
+  buildFeed();
+}
+
+function switchTab(tab) {
+  if (currentTab === tab) return;
+  currentTab = tab;
+  const isFeed = tab === 'feed';
+  document.getElementById('nav-tab-feed').classList.toggle('active', isFeed);
+  document.getElementById('nav-tab-golfliv').classList.toggle('active', !isFeed);
+  document.getElementById('stats-bar').style.display = isFeed ? 'none' : '';
+  document.getElementById('view-banner').style.display = (isFeed || !viewingProfileId) ? 'none' : '';
+  document.getElementById('feed-view').style.display = isFeed ? '' : 'none';
+
+  // Toggle golfliv content visibility
+  const main = document.getElementById('main');
+  Array.from(main.children).forEach(el => {
+    if (el.id === 'feed-view') return; // handled above
+    el.style.display = isFeed ? 'none' : '';
+  });
+
+  if (isFeed) {
+    buildFeed();
+  } else {
+    // Restore correct golfliv state
+    if (viewingProfileId) document.getElementById('view-banner').style.display = '';
+    if (activeRegionSlug) {
+      document.getElementById('summary-view').classList.remove('visible');
+      REGION_ORDER.forEach(r => {
+        const s = document.getElementById('section-' + regionSlug(r));
+        if (s) s.style.display = regionSlug(r) === activeRegionSlug ? '' : 'none';
+      });
+    } else {
+      buildSummaryView();
+      document.getElementById('summary-view').classList.add('visible');
+      REGION_ORDER.forEach(r => {
+        const s = document.getElementById('section-' + regionSlug(r));
+        if (s) s.style.display = 'none';
+      });
+    }
+    updateStats(activeRegionSlug ? REGION_ORDER.find(r => regionSlug(r) === activeRegionSlug) : null);
+  }
+}
+
+// ---- New post modal ----
+function openNewPostModal() {
+  newPostSelectedCourseId = null;
+  newPostPhotoData = null;
+  newPostCurrentTee = null;
+  document.getElementById('new-post-course-input').value = '';
+  document.getElementById('new-post-course-id').value = '';
+  document.getElementById('new-post-score').value = '';
+  document.getElementById('new-post-caption').value = '';
+  document.getElementById('new-post-tee-selector').innerHTML = '';
+  document.getElementById('new-post-photo-preview').innerHTML = '';
+  document.getElementById('course-suggestions').classList.remove('visible');
+  document.getElementById('new-post-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeNewPostModal() {
+  document.getElementById('new-post-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleNewPostOverlayClick(e) {
+  if (e.target === document.getElementById('new-post-overlay')) closeNewPostModal();
+}
+
+function filterCourseSuggestions(query) {
+  const box = document.getElementById('course-suggestions');
+  if (!query.trim()) { box.classList.remove('visible'); return; }
+  const q = query.toLowerCase();
+  const matches = COURSES.filter(c => c.name.toLowerCase().includes(q) || c.location.toLowerCase().includes(q)).slice(0, 8);
+  if (!matches.length) { box.classList.remove('visible'); return; }
+  box.innerHTML = matches.map(c =>
+    `<div class="course-suggestion-item${newPostSelectedCourseId === c.id ? ' selected' : ''}"
+      onclick="selectPostCourse('${c.id}','${c.name.replace(/'/g,"\\'")}')">
+      ${c.name} <span style="color:var(--text-muted);font-size:0.78rem">— ${c.location}</span>
+    </div>`
+  ).join('');
+  box.classList.add('visible');
+}
+
+function selectPostCourse(id, name) {
+  newPostSelectedCourseId = id;
+  newPostCurrentTee = null;
+  document.getElementById('new-post-course-input').value = name;
+  document.getElementById('new-post-course-id').value = id;
+  document.getElementById('course-suggestions').classList.remove('visible');
+  // Render tee buttons for this course
+  const course = COURSES.find(c => c.id === id);
+  const tees = (course && course.tees) ? course.tees : DEFAULT_TEES;
+  const sel = document.getElementById('new-post-tee-selector');
+  sel.innerHTML = tees.map(t =>
+    `<button class="tee-btn" data-tee="${t.label}" style="--tee-color:${t.color}"
+      onclick="newPostSelectTee('${t.label}',this)">${t.label}</button>`
+  ).join('');
+}
+
+function newPostSelectTee(label, btn) {
+  newPostCurrentTee = label;
+  document.querySelectorAll('#new-post-tee-selector .tee-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function handleNewPostPhoto(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    newPostPhotoData = e.target.result;
+    document.getElementById('new-post-photo-preview').innerHTML =
+      `<img src="${newPostPhotoData}" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function submitNewPost() {
+  const caption = document.getElementById('new-post-caption').value.trim();
+  const score = parseInt(document.getElementById('new-post-score').value) || null;
+  if (!caption && !score && !newPostSelectedCourseId) return;
+  const profile = getActiveProfile();
+  const post = {
+    id: 'post_' + genId(),
+    authorId: profile.id,
+    courseId: newPostSelectedCourseId || null,
+    score,
+    tee: newPostCurrentTee,
+    caption,
+    photo: newPostPhotoData,
+    likes: [],
+    comments: [],
+    timestamp: new Date().toISOString()
+  };
+  const posts = loadFeedPosts();
+  posts.unshift(post);
+  saveFeedPosts(posts);
+  closeNewPostModal();
+  buildFeed();
+}
+
 // Init
 function startApp() {
   document.getElementById('setup-overlay').classList.add('hidden');
   ensureTestProfiles();
   ensureTestFriends();
+  seedTestPosts();
   data = loadData();
   updateProfileBadge();
   initFriendsPanel();
   buildSidebar();
+
+  // Build golfliv content (hidden initially — feed is default tab)
+  currentTab = 'golfliv'; // set temporarily so buildCourses doesn't hide things
   buildCourses();
   REGION_ORDER.forEach(r => {
     if (r !== 'Østlandet') {
@@ -2797,6 +3310,10 @@ function startApp() {
   });
   activeRegionSlug = regionSlug('Østlandet');
   updateStats('Østlandet');
+
+  // Start on feed tab
+  currentTab = 'feed'; // reset before switchTab call
+  switchTab('feed');
 }
 
 function initApp() {
