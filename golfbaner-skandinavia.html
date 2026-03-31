@@ -700,15 +700,27 @@
       .summary-card-label { font-size: 0.68rem; }
       .summary-card-sub   { font-size: 0.65rem; }
 
-      /* Top 3 favourites — single column */
-      .summary-top3-grid { grid-template-columns: 1fr; gap: 12px; }
+      /* Top 3 favourites — 3 columns like regular grid */
+      .summary-top3-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
-      /* Course grid — single column */
-      .courses-grid   { grid-template-columns: 1fr !important; gap: 10px; }
+      /* Course grid — 3 columns on mobile */
+      .courses-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px; }
 
-      /* Course cards */
-      .card-photo, .card-photo-placeholder { height: 140px; }
-      .course-name  { font-size: 0.95rem; }
+      /* Compact course cards for mobile */
+      .card-photo, .card-photo-placeholder { height: 80px; }
+      .card-body    { padding: 6px 7px 8px; gap: 4px; }
+      .course-name  { font-size: 0.75rem; line-height: 1.3; font-weight: 700; }
+      .course-location { display: none; } /* hide location to save space */
+      .card-badges  { gap: 3px; }
+      .badge        { font-size: 0.58rem; padding: 2px 5px; }
+      .card-rating  { gap: 1px; }
+      .card-rating .star { font-size: 0.7rem; }
+      .card-note    { display: none; } /* hide notes on mobile */
+      .card-friends { display: none; } /* hide friend bubbles on mobile */
+      .best-score   { font-size: 0.68rem; padding: 2px 5px; }
+      .played-check { font-size: 0.75rem; }
+      .card-top     { gap: 4px; }
+      .tee-dot      { width: 7px; height: 7px; }
 
       /* Region section headings */
       .region-section { padding: 0 12px 20px; }
