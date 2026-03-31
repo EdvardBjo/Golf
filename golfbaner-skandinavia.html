@@ -32,7 +32,6 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
     }
 
     .header-bar {
@@ -647,7 +646,7 @@
       .logo-flag-svg { width: 22px; height: 26px; }
 
       /* Nav tabs — touch-friendly, spread full width */
-      .main-nav { top: 54px; }
+      .main-nav { top: 55px; }
       .main-nav-inner { padding: 0; }
       .nav-tab {
         flex: 1; justify-content: center;
@@ -841,7 +840,8 @@
     .main-nav {
       background: white;
       border-bottom: 2px solid var(--green-border);
-      position: sticky; top: 62px; z-index: 90;
+      position: sticky; top: 63px; z-index: 90;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     }
     .main-nav-inner {
       max-width: 1400px; margin: 0 auto;
@@ -3138,7 +3138,7 @@ function buildSummaryView() {
       <div class="summary-card">
         <div class="summary-card-label">Fullført</div>
         <div class="summary-card-value">${totalCourses > 0 ? Math.round((totalPlayed / totalCourses) * 100) : 0}%</div>
-        <div class="summary-card-sub">av norske golfbaner</div>
+        <div class="summary-card-sub">baner totalt</div>
       </div>
       <div class="summary-card">
         <div class="summary-card-label">Regioner utforsket</div>
