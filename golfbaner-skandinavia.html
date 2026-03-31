@@ -761,13 +761,18 @@
 
     /* Mobile region picker bar */
     .mobile-region-bar {
-      display: none; /* hidden on desktop */
+      display: none; /* shown via JS on mobile golfliv only */
       align-items: center;
-      padding: 8px 12px 4px;
+      padding: 8px 12px 6px;
       overflow-x: auto; -webkit-overflow-scrolling: touch;
       gap: 8px;
       background: #fff;
       border-bottom: 1px solid var(--green-border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      width: 100%;
+      box-sizing: border-box;
     }
     .mobile-region-bar::-webkit-scrollbar { display: none; }
     .mobile-region-pill {
@@ -786,9 +791,6 @@
       background: var(--green-dark);
       color: #fff;
       border-color: var(--green-dark);
-    }
-    @media (max-width: 768px) {
-      .mobile-region-bar { display: flex; }
     }
 
     /* Mobile friends strip (horizontal scroll, Instagram Stories-style) */
@@ -1749,9 +1751,6 @@
 </div>
 
 <div class="page-body">
-  <!-- Mobile region picker (golfliv only, hidden on desktop) -->
-  <div class="mobile-region-bar" id="mobile-region-bar" style="display:none"></div>
-
   <aside class="sidebar">
     <div class="sidebar-list" id="sidebar-list"></div>
   </aside>
@@ -1777,6 +1776,8 @@
       </div>
       <div id="news-container"></div>
     </div>
+    <!-- Mobile region picker — inside main so it doesn't break flex layout -->
+    <div class="mobile-region-bar" id="mobile-region-bar" style="display:none"></div>
     <div id="summary-view"></div>
   </main>
   <aside class="friends-panel" id="friends-panel" style="display:none">
@@ -2735,16 +2736,26 @@ function buildCourses() {
   // Preserve non-golfliv views across innerHTML wipe
   const feedView = document.getElementById('feed-view');
   const newsView = document.getElementById('news-view');
+  const regionBar = document.getElementById('mobile-region-bar');
   main.innerHTML = '<div id="summary-view"></div>';
   REGION_ORDER.filter(r => COURSES.some(c => c.region === r)).forEach(region => {
     main.appendChild(buildRegionSection(region));
   });
   if (feedView) main.appendChild(feedView);
   if (newsView) main.appendChild(newsView);
+  // Re-append region bar after summary-view (insert before first region section)
+  if (regionBar) {
+    const summaryView = main.querySelector('#summary-view');
+    if (summaryView && summaryView.nextSibling) {
+      main.insertBefore(regionBar, summaryView.nextSibling);
+    } else {
+      main.appendChild(regionBar);
+    }
+  }
   // Hide golfliv content if not on golfliv tab
   if (currentTab !== 'golfliv') {
     Array.from(main.children).forEach(el => {
-      if (el.id === 'feed-view' || el.id === 'news-view') return;
+      if (el.id === 'feed-view' || el.id === 'news-view' || el.id === 'mobile-region-bar') return;
       el.style.display = 'none';
     });
   }
