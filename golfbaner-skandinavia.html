@@ -654,9 +654,11 @@
       .main-nav-inner { padding: 0; }
       .nav-tab {
         flex: 1; justify-content: center;
-        padding: 13px 6px; font-size: 0.8rem; gap: 5px;
+        padding: 13px 4px; font-size: 0.72rem; gap: 4px;
+        white-space: nowrap;
       }
-      .nav-tab-icon { font-size: 0.95rem; }
+      .nav-tab-icon { font-size: 0.85rem; }
+      .nav-flag-icon { width: 13px; height: 15px; }
 
       /* Stats bar */
       .stats-bar { padding: 6px 12px; }
@@ -860,7 +862,9 @@
       color: var(--text-muted); cursor: pointer;
       border-bottom: 3px solid transparent;
       margin-bottom: -2px; transition: all 0.15s;
+      white-space: nowrap;
     }
+    .nav-flag-icon { width: 16px; height: 18px; vertical-align: middle; }
     .nav-tab:hover { color: var(--green-dark); }
     .nav-tab.active { color: var(--green-dark); border-bottom-color: var(--green-mid); }
     .nav-tab-icon { font-size: 1rem; }
@@ -1653,7 +1657,7 @@
         <span class="nav-tab-icon">📰</span> Feed
       </button>
       <button class="nav-tab" id="nav-tab-golfliv" onclick="switchTab('golfliv')">
-        <span class="nav-tab-icon">🚩</span> My Flags
+        <svg class="nav-flag-icon" viewBox="0 0 26 30" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="2" x2="5" y2="28" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M5 3 L21 9.5 L5 16 Z" fill="currentColor"/></svg> My Flags
       </button>
       <button class="nav-tab" id="nav-tab-news" onclick="switchTab('news')">
         <span class="nav-tab-icon">🗞️</span> Nyheter
@@ -3042,7 +3046,7 @@ function buildSidebar() {
   const homeBtn = document.createElement('div');
   homeBtn.id = 'sidebar-home-btn';
   homeBtn.className = 'sidebar-home-btn' + (activeRegionSlug === null ? ' active' : '');
-  homeBtn.innerHTML = `<span class="sidebar-home-icon">🚩</span><span class="sidebar-home-label" id="sidebar-home-label">${getGolflivLabel()}</span>`;
+  homeBtn.innerHTML = `<svg class="sidebar-home-icon" viewBox="0 0 26 30" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:18px;flex-shrink:0"><line x1="5" y1="2" x2="5" y2="28" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M5 3 L21 9.5 L5 16 Z" fill="currentColor"/></svg><span class="sidebar-home-label" id="sidebar-home-label">${getGolflivLabel()}</span>`;
   homeBtn.onclick = goToSummary;
   list.appendChild(homeBtn);
 
