@@ -25,13 +25,18 @@
 
     body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
+    /* TOP SHELL — header + nav as one sticky unit, gap-free */
+    .top-shell {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+    }
+
     /* HEADER */
     header {
       background: #fff;
       border-bottom: 1.5px solid var(--green-border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
     }
 
     .header-bar {
@@ -646,7 +651,6 @@
       .logo-flag-svg { width: 22px; height: 26px; }
 
       /* Nav tabs — touch-friendly, spread full width */
-      .main-nav { top: 55px; }
       .main-nav-inner { padding: 0; }
       .nav-tab {
         flex: 1; justify-content: center;
@@ -840,7 +844,6 @@
     .main-nav {
       background: white;
       border-bottom: 2px solid var(--green-border);
-      position: sticky; top: 63px; z-index: 90;
       box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     }
     .main-nav-inner {
@@ -1502,37 +1505,39 @@
   </div>
 </div>
 
-<header>
-  <div class="header-bar">
-    <div class="header-logo">
-      <!-- Flagged logo mark: flag on pole -->
-      <svg class="logo-flag-svg" viewBox="0 0 26 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <line x1="5" y1="2" x2="5" y2="28" stroke="#1a4a2e" stroke-width="2.4" stroke-linecap="round"/>
-        <path d="M5 3 L21 9.5 L5 16 Z" fill="#2d7a4f"/>
-      </svg>
-      <span class="logo-word">Flagged</span>
-      <span class="logo-tagline">course by course</span>
+<div class="top-shell">
+  <header>
+    <div class="header-bar">
+      <div class="header-logo">
+        <!-- Flagged logo mark: flag on pole -->
+        <svg class="logo-flag-svg" viewBox="0 0 26 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="5" y1="2" x2="5" y2="28" stroke="#1a4a2e" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M5 3 L21 9.5 L5 16 Z" fill="#2d7a4f"/>
+        </svg>
+        <span class="logo-word">Flagged</span>
+        <span class="logo-tagline">course by course</span>
+      </div>
+      <div class="header-profile-btn" id="header-profile-btn" onclick="openProfileModal()" style="display:none">
+        <div class="profile-avatar-sm" id="header-avatar"></div>
+        <span class="profile-name-sm" id="header-profile-name"></span>
+      </div>
     </div>
-    <div class="header-profile-btn" id="header-profile-btn" onclick="openProfileModal()" style="display:none">
-      <div class="profile-avatar-sm" id="header-avatar"></div>
-      <span class="profile-name-sm" id="header-profile-name"></span>
-    </div>
-  </div>
-</header>
+  </header>
 
-<nav class="main-nav" id="main-nav">
-  <div class="main-nav-inner">
-    <button class="nav-tab active" id="nav-tab-feed" onclick="switchTab('feed')">
-      <span class="nav-tab-icon">📰</span> Feed
-    </button>
-    <button class="nav-tab" id="nav-tab-golfliv" onclick="switchTab('golfliv')">
-      <span class="nav-tab-icon">⛳</span> Mitt golfliv
-    </button>
-    <button class="nav-tab" id="nav-tab-news" onclick="switchTab('news')">
-      <span class="nav-tab-icon">🗞️</span> Nyheter
-    </button>
-  </div>
-</nav>
+  <nav class="main-nav" id="main-nav">
+    <div class="main-nav-inner">
+      <button class="nav-tab active" id="nav-tab-feed" onclick="switchTab('feed')">
+        <span class="nav-tab-icon">📰</span> Feed
+      </button>
+      <button class="nav-tab" id="nav-tab-golfliv" onclick="switchTab('golfliv')">
+        <span class="nav-tab-icon">⛳</span> Mitt golfliv
+      </button>
+      <button class="nav-tab" id="nav-tab-news" onclick="switchTab('news')">
+        <span class="nav-tab-icon">🗞️</span> Nyheter
+      </button>
+    </div>
+  </nav>
+</div>
 
 <div class="stats-bar" id="stats-bar" style="display:none">
   <div class="stat-region-label" id="stat-region-label"></div>
