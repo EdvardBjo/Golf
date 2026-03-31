@@ -3045,7 +3045,7 @@ function timeAgo(ts) {
 }
 
 function seedTestPosts() {
-  if (localStorage.getItem('golf_feed_seeded')) return;
+  if (localStorage.getItem('golf_feed_seeded_v2')) return;
   const n = Date.now();
   const h = s => new Date(n - s * 3600000).toISOString();
   const d = s => new Date(n - s * 86400000).toISOString();
@@ -3065,7 +3065,7 @@ function seedTestPosts() {
     { id:'post_013', authorId:'test_ole_kristiansen', courseId:'oslo-gk',    score:70,  tee:'6100m', caption:'Tilbake på Bogstad. Som å komme hjem. Perfekt greenstempo i dag.', photo:null, likes:['test_lars_eriksen','test_kjetil_andersen','test_silje_berg'], comments:[], timestamp:d(14) },
   ];
   saveFeedPosts(posts);
-  localStorage.setItem('golf_feed_seeded', '1');
+  localStorage.setItem('golf_feed_seeded_v2', '1');
 }
 
 function buildFeedPostHTML(post, profiles, activeId) {
@@ -3160,7 +3160,8 @@ function switchTab(tab) {
   document.getElementById('nav-tab-golfliv').classList.toggle('active', !isFeed);
   document.getElementById('stats-bar').style.display = isFeed ? 'none' : '';
   document.getElementById('view-banner').style.display = (isFeed || !viewingProfileId) ? 'none' : '';
-  document.getElementById('feed-view').style.display = isFeed ? '' : 'none';
+  document.getElementById('feed-view').style.display = isFeed ? 'block' : 'none';
+  document.querySelector('.sidebar').style.display = isFeed ? 'none' : '';
 
   // Toggle golfliv content visibility
   const main = document.getElementById('main');
