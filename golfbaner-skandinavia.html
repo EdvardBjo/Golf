@@ -759,6 +759,38 @@
       }
     }
 
+    /* Mobile region picker bar */
+    .mobile-region-bar {
+      display: none; /* hidden on desktop */
+      align-items: center;
+      padding: 8px 12px 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      gap: 8px;
+      background: #fff;
+      border-bottom: 1px solid var(--green-border);
+    }
+    .mobile-region-bar::-webkit-scrollbar { display: none; }
+    .mobile-region-pill {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem; font-weight: 600;
+      background: var(--green-light);
+      color: var(--green-dark);
+      border: 1.5px solid var(--green-border);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .mobile-region-pill.active {
+      background: var(--green-dark);
+      color: #fff;
+      border-color: var(--green-dark);
+    }
+    @media (max-width: 768px) {
+      .mobile-region-bar { display: flex; }
+    }
+
     /* Mobile friends strip (horizontal scroll, Instagram Stories-style) */
     .mobile-friends-bar {
       display: none; /* hidden on desktop */
@@ -1717,6 +1749,9 @@
 </div>
 
 <div class="page-body">
+  <!-- Mobile region picker (golfliv only, hidden on desktop) -->
+  <div class="mobile-region-bar" id="mobile-region-bar" style="display:none"></div>
+
   <aside class="sidebar">
     <div class="sidebar-list" id="sidebar-list"></div>
   </aside>
@@ -3120,6 +3155,7 @@ function toggleRegionSidebar(slug) {
     document.getElementById('summary-view').classList.add('visible');
     updateStats();
     updateSidebarHomeBtn();
+    buildMobileRegionBar();
     return;
   }
 
@@ -3128,6 +3164,7 @@ function toggleRegionSidebar(slug) {
   document.getElementById('summary-view').classList.remove('visible');
   updateStats(region);
   updateSidebarHomeBtn();
+  buildMobileRegionBar();
 
   const items = document.getElementById('sidebar-region-' + slug);
   const arrow = document.getElementById('arrow-' + slug);
@@ -3135,6 +3172,41 @@ function toggleRegionSidebar(slug) {
   if (items) items.style.display = '';
   if (arrow) arrow.textContent = '▼';
   if (section) { section.style.display = ''; section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+}
+
+function buildMobileRegionBar() {
+  const bar = document.getElementById('mobile-region-bar');
+  if (!bar) return;
+  const availableRegions = REGION_ORDER.filter(r => COURSES.some(c => c.region === r));
+  bar.innerHTML = '';
+
+  // "Hjem" pill
+  const homePill = document.createElement('div');
+  homePill.className = 'mobile-region-pill' + (activeRegionSlug === null ? ' active' : '');
+  homePill.textContent = '🏠 Hjem';
+  homePill.onclick = () => {
+    if (activeRegionSlug === null) return;
+    activeRegionSlug = null;
+    REGION_ORDER.forEach(r => {
+      const s = document.getElementById('section-' + regionSlug(r));
+      if (s) s.style.display = 'none';
+    });
+    buildSummaryView();
+    document.getElementById('summary-view').classList.add('visible');
+    updateStats();
+    buildMobileRegionBar();
+  };
+  bar.appendChild(homePill);
+
+  availableRegions.forEach(region => {
+    const slug = regionSlug(region);
+    const pill = document.createElement('div');
+    pill.className = 'mobile-region-pill' + (activeRegionSlug === slug ? ' active' : '');
+    const playedCount = COURSES.filter(c => c.region === region && data[c.id]?.played).length;
+    pill.textContent = region + (playedCount > 0 ? ` (${playedCount})` : '');
+    pill.onclick = () => toggleRegionSidebar(slug);
+    bar.appendChild(pill);
+  });
 }
 
 function buildSummaryView() {
@@ -3564,6 +3636,15 @@ function switchTab(tab) {
 
   document.getElementById('stats-bar').style.display    = isGolfliv ? '' : 'none';
   document.getElementById('view-banner').style.display  = (isGolfliv && viewingProfileId) ? '' : 'none';
+  const mobileRegionBar = document.getElementById('mobile-region-bar');
+  if (mobileRegionBar) {
+    if (isGolfliv && window.innerWidth <= 768) {
+      mobileRegionBar.style.display = 'flex';
+      buildMobileRegionBar();
+    } else {
+      mobileRegionBar.style.display = 'none';
+    }
+  }
   const feedViewEl = document.getElementById('feed-view');
   const newsViewEl = document.getElementById('news-view');
   if (feedViewEl) feedViewEl.style.display = isFeed ? 'block' : 'none';
@@ -3710,6 +3791,7 @@ function startApp() {
   updateProfileBadge();
   initFriendsPanel();
   buildSidebar();
+  buildMobileRegionBar();
 
   // Build golfliv content (hidden initially — feed is default tab)
   currentTab = 'golfliv'; // set temporarily so buildCourses doesn't hide things
