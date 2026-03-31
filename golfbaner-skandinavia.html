@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Norske Golfbaner</title>
+  <title>Flagged</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,53 +27,53 @@
 
     /* HEADER */
     header {
-      background: #a8cce8;
-      color: white;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      padding: 0;
+      background: #fff;
+      border-bottom: 1.5px solid var(--green-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
     }
 
-    .header-scene {
-      position: relative;
-      width: 100%;
-      height: 260px;
-    }
-
-    .header-scene svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .header-inner {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
+    .header-bar {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 62px;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding-top: 22px;
+      justify-content: space-between;
     }
 
-    header h1 {
-      font-size: 2.7rem;
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .logo-flag-svg {
+      width: 26px;
+      height: 30px;
+      flex-shrink: 0;
+    }
+
+    .logo-word {
+      font-size: 1.55rem;
       font-weight: 900;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-      color: #fff;
-      text-shadow: 0 2px 18px rgba(0,0,0,0.45), 0 1px 4px rgba(0,0,0,0.3);
+      color: var(--green-dark);
+      letter-spacing: -0.5px;
     }
 
-    header p {
-      font-size: 0.97rem;
-      font-weight: 400;
-      color: rgba(255,255,255,0.93);
-      text-shadow: 0 1px 8px rgba(0,0,0,0.4);
-      letter-spacing: 0.3px;
+    .logo-tagline {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.2px;
+      margin-left: 2px;
+      align-self: flex-end;
+      margin-bottom: 3px;
     }
 
     /* STATS BAR */
@@ -640,13 +640,14 @@
     /* Mobile — single column, hide side panels */
     @media (max-width: 768px) {
 
-      /* Header — shorter */
-      .header-scene { height: 150px; }
-      .header-title { font-size: 1.5rem; }
-      .header-sub   { font-size: 0.72rem; }
-      .header-profile-btn { top: 10px; right: 10px; }
+      /* Header — mobile compact */
+      .header-bar { height: 54px; padding: 0 14px; }
+      .logo-word  { font-size: 1.3rem; }
+      .logo-tagline { display: none; }
+      .logo-flag-svg { width: 22px; height: 26px; }
 
       /* Nav tabs — touch-friendly, spread full width */
+      .main-nav { top: 54px; }
       .main-nav-inner { padding: 0; }
       .nav-tab {
         flex: 1; justify-content: center;
@@ -834,14 +835,13 @@
     @media (max-width: 400px) {
       .summary-grid { grid-template-columns: repeat(2, 1fr); }
       .nav-tab      { font-size: 0.72rem; padding: 12px 4px; }
-      .header-title { font-size: 1.25rem; }
     }
 
     /* ===================== MAIN NAV TABS ===================== */
     .main-nav {
       background: white;
       border-bottom: 2px solid var(--green-border);
-      position: sticky; top: 0; z-index: 90;
+      position: sticky; top: 62px; z-index: 90;
     }
     .main-nav-inner {
       max-width: 1400px; margin: 0 auto;
@@ -1247,25 +1247,24 @@
 
     /* PROFILE BUTTON IN HEADER */
     .header-profile-btn {
-      position: absolute; top: 14px; right: 18px; z-index: 3;
       display: flex; align-items: center; gap: 8px;
-      background: rgba(0,0,0,0.28); border-radius: 24px;
-      padding: 5px 12px 5px 5px; cursor: pointer;
-      transition: background 0.2s; backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.15);
+      background: var(--green-light); border-radius: 24px;
+      padding: 5px 14px 5px 5px; cursor: pointer;
+      transition: background 0.2s;
+      border: 1.5px solid var(--green-border);
     }
-    .header-profile-btn:hover { background: rgba(0,0,0,0.42); }
+    .header-profile-btn:hover { background: #d4edda; }
     .profile-avatar-sm {
-      width: 30px; height: 30px; border-radius: 50%;
+      width: 32px; height: 32px; border-radius: 50%;
       background: var(--green-mid); color: white;
       display: flex; align-items: center; justify-content: center;
       font-size: 0.8rem; font-weight: 800; overflow: hidden; flex-shrink: 0;
-      border: 2px solid rgba(255,255,255,0.5);
+      border: 2px solid var(--green-border);
     }
     .profile-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
     .profile-name-sm {
-      font-size: 0.8rem; font-weight: 600; color: white;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.4); max-width: 120px;
+      font-size: 0.82rem; font-weight: 700; color: var(--green-dark);
+      max-width: 120px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
@@ -1504,203 +1503,15 @@
 </div>
 
 <header>
-  <div class="header-scene">
-    <svg viewBox="0 0 1200 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#3a82b8"/>
-          <stop offset="55%" stop-color="#8ec8e8"/>
-          <stop offset="100%" stop-color="#c0e0f4"/>
-        </linearGradient>
-        <linearGradient id="fairwayG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#3aaa5e"/>
-          <stop offset="100%" stop-color="#1c7838"/>
-        </linearGradient>
-        <linearGradient id="fairwayS" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#2a9448"/>
-          <stop offset="100%" stop-color="#145e2a"/>
-        </linearGradient>
-        <linearGradient id="roughG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#1a6030"/>
-          <stop offset="100%" stop-color="#0e3e1c"/>
-        </linearGradient>
-        <linearGradient id="bunkerG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#ede0b8"/>
-          <stop offset="100%" stop-color="#d8c898"/>
-        </linearGradient>
-        <filter id="sf">
-          <feGaussianBlur stdDeviation="2.5"/>
-        </filter>
-        <filter id="sf1">
-          <feGaussianBlur stdDeviation="1.2"/>
-        </filter>
-      </defs>
-
-      <!-- Sky -->
-      <rect width="1200" height="260" fill="url(#sky)"/>
-
-      <!-- Soft clouds -->
-      <ellipse cx="520" cy="30" rx="90" ry="16" fill="rgba(255,255,255,0.38)" filter="url(#sf)"/>
-      <ellipse cx="560" cy="24" rx="60" ry="12" fill="rgba(255,255,255,0.42)" filter="url(#sf)"/>
-      <ellipse cx="700" cy="38" rx="70" ry="13" fill="rgba(255,255,255,0.28)" filter="url(#sf)"/>
-      <ellipse cx="650" cy="28" rx="50" ry="10" fill="rgba(255,255,255,0.32)" filter="url(#sf)"/>
-
-      <!-- ======= LEFT PINE FOREST ======= -->
-      <!-- Pine: cx=18, top=28 -->
-      <rect x="14" y="105" width="8" height="155" fill="#2a1a0a"/>
-      <polygon points="18,28 2,72 34,72" fill="#145228"/><polygon points="18,50 0,98 36,98" fill="#0f4220"/><polygon points="18,72 -2,122 38,122" fill="#0c3a1c"/>
-
-      <!-- Pine: cx=52, top=14 -->
-      <rect x="48" y="95" width="8" height="165" fill="#2a1a0a"/>
-      <polygon points="52,14 34,62 70,62" fill="#175a2c"/><polygon points="52,38 30,90 74,90" fill="#124822"/><polygon points="52,62 28,116 76,116" fill="#0e3e1c"/><polygon points="52,84 26,140 78,140" fill="#0b3618"/>
-
-      <!-- Pine: cx=88, top=22 -->
-      <rect x="84" y="100" width="8" height="160" fill="#2a1a0a"/>
-      <polygon points="88,22 70,68 106,68" fill="#145228"/><polygon points="88,46 66,96 110,96" fill="#104020"/><polygon points="88,68 62,120 114,120" fill="#0d3a1c"/>
-
-      <!-- Pine: cx=124, top=10 -->
-      <rect x="120" y="90" width="9" height="170" fill="#2a1a0a"/>
-      <polygon points="124.5,10 104,60 145,60" fill="#185e30"/><polygon points="124.5,36 100,90 149,90" fill="#135028"/><polygon points="124.5,60 96,118 153,118" fill="#0f4220"/><polygon points="124.5,84 94,144 155,144" fill="#0c3a1c"/>
-
-      <!-- Pine: cx=162, top=18 -->
-      <rect x="158" y="96" width="8" height="164" fill="#2a1a0a"/>
-      <polygon points="162,18 144,66 180,66" fill="#145228"/><polygon points="162,42 140,94 184,94" fill="#104020"/><polygon points="162,66 136,120 188,120" fill="#0d3c1c"/>
-
-      <!-- Pine: cx=198, top=26 -->
-      <rect x="194" y="104" width="8" height="156" fill="#2a1a0a"/>
-      <polygon points="198,26 180,72 216,72" fill="#125026"/><polygon points="198,50 176,100 220,100" fill="#0f4020"/><polygon points="198,72 172,124 224,124" fill="#0c3818"/>
-
-      <!-- Pine: cx=234, top=16 -->
-      <rect x="230" y="94" width="8" height="166" fill="#2a1a0a"/>
-      <polygon points="234,16 214,64 254,64" fill="#175a2c"/><polygon points="234,40 210,92 258,92" fill="#124822"/><polygon points="234,64 206,118 262,118" fill="#0e3e1c"/><polygon points="234,86 204,142 264,142" fill="#0b3618"/>
-
-      <!-- Pine: cx=268, top=24 -->
-      <rect x="264" y="102" width="8" height="158" fill="#2a1a0a"/>
-      <polygon points="268,24 250,70 286,70" fill="#135028"/><polygon points="268,48 246,98 290,98" fill="#104020"/><polygon points="268,70 242,122 294,122" fill="#0d3c1c"/>
-
-      <!-- Pine: cx=300, top=20 -->
-      <rect x="296" y="98" width="8" height="162" fill="#2a1a0a"/>
-      <polygon points="300,20 280,68 320,68" fill="#145228"/><polygon points="300,44 276,96 324,96" fill="#104020"/><polygon points="300,68 272,122 328,122" fill="#0d3a1c"/>
-
-      <!-- Azaleas — left side, clusters between/in front of pines -->
-      <ellipse cx="30" cy="185" rx="28" ry="16" fill="#c24078" opacity="0.9"/>
-      <ellipse cx="55" cy="178" rx="22" ry="14" fill="#d8508a" opacity="0.85"/>
-      <ellipse cx="14" cy="192" rx="18" ry="12" fill="#b03068" opacity="0.8"/>
-      <ellipse cx="72" cy="190" rx="20" ry="13" fill="#cc4880" opacity="0.85"/>
-
-      <ellipse cx="110" cy="176" rx="26" ry="15" fill="#d45088" opacity="0.9"/>
-      <ellipse cx="130" cy="182" rx="20" ry="12" fill="#c03870" opacity="0.85"/>
-      <ellipse cx="95" cy="188" rx="16" ry="10" fill="#e06090" opacity="0.8"/>
-
-      <ellipse cx="178" cy="188" rx="24" ry="14" fill="#c84480" opacity="0.9"/>
-      <ellipse cx="160" cy="196" rx="18" ry="11" fill="#b83070" opacity="0.85"/>
-      <ellipse cx="200" cy="180" rx="20" ry="13" fill="#d85090" opacity="0.8"/>
-
-      <ellipse cx="248" cy="182" rx="22" ry="13" fill="#cc4280" opacity="0.9"/>
-      <ellipse cx="270" cy="192" rx="18" ry="11" fill="#be3472" opacity="0.85"/>
-      <ellipse cx="228" cy="194" rx="16" ry="10" fill="#e06090" opacity="0.75"/>
-
-      <!-- Azalea highlights (lighter blooms on top) -->
-      <ellipse cx="52" cy="172" rx="12" ry="8" fill="#f080a8" opacity="0.7"/>
-      <ellipse cx="128" cy="170" rx="14" ry="8" fill="#f07aa0" opacity="0.65"/>
-      <ellipse cx="200" cy="175" rx="11" ry="7" fill="#f080a8" opacity="0.6"/>
-      <ellipse cx="268" cy="176" rx="13" ry="8" fill="#f07aa0" opacity="0.65"/>
-
-      <!-- ======= RIGHT PINE FOREST (mirrored) ======= -->
-      <!-- Pine: cx=1182, top=28 -->
-      <rect x="1178" y="105" width="8" height="155" fill="#2a1a0a"/>
-      <polygon points="1182,28 1166,72 1198,72" fill="#145228"/><polygon points="1182,50 1164,98 1200,98" fill="#0f4220"/><polygon points="1182,72 1162,122 1202,122" fill="#0c3a1c"/>
-
-      <!-- Pine: cx=1148, top=14 -->
-      <rect x="1144" y="95" width="8" height="165" fill="#2a1a0a"/>
-      <polygon points="1148,14 1130,62 1166,62" fill="#175a2c"/><polygon points="1148,38 1126,90 1170,90" fill="#124822"/><polygon points="1148,62 1122,116 1174,116" fill="#0e3e1c"/><polygon points="1148,84 1120,140 1176,140" fill="#0b3618"/>
-
-      <!-- Pine: cx=1112, top=22 -->
-      <rect x="1108" y="100" width="8" height="160" fill="#2a1a0a"/>
-      <polygon points="1112,22 1094,68 1130,68" fill="#145228"/><polygon points="1112,46 1090,96 1134,96" fill="#104020"/><polygon points="1112,68 1086,120 1138,120" fill="#0d3a1c"/>
-
-      <!-- Pine: cx=1075.5, top=10 -->
-      <rect x="1071" y="90" width="9" height="170" fill="#2a1a0a"/>
-      <polygon points="1075.5,10 1055,60 1096,60" fill="#185e30"/><polygon points="1075.5,36 1051,90 1100,90" fill="#135028"/><polygon points="1075.5,60 1047,118 1104,118" fill="#0f4220"/><polygon points="1075.5,84 1045,144 1106,144" fill="#0c3a1c"/>
-
-      <!-- Pine: cx=1038, top=18 -->
-      <rect x="1034" y="96" width="8" height="164" fill="#2a1a0a"/>
-      <polygon points="1038,18 1020,66 1056,66" fill="#145228"/><polygon points="1038,42 1016,94 1060,94" fill="#104020"/><polygon points="1038,66 1012,120 1064,120" fill="#0d3c1c"/>
-
-      <!-- Pine: cx=1002, top=26 -->
-      <rect x="998" y="104" width="8" height="156" fill="#2a1a0a"/>
-      <polygon points="1002,26 984,72 1020,72" fill="#125026"/><polygon points="1002,50 980,100 1024,100" fill="#0f4020"/><polygon points="1002,72 976,124 1028,124" fill="#0c3818"/>
-
-      <!-- Pine: cx=966, top=16 -->
-      <rect x="962" y="94" width="8" height="166" fill="#2a1a0a"/>
-      <polygon points="966,16 946,64 986,64" fill="#175a2c"/><polygon points="966,40 942,92 990,92" fill="#124822"/><polygon points="966,64 938,118 994,118" fill="#0e3e1c"/><polygon points="966,86 936,142 996,142" fill="#0b3618"/>
-
-      <!-- Pine: cx=932, top=24 -->
-      <rect x="928" y="102" width="8" height="158" fill="#2a1a0a"/>
-      <polygon points="932,24 914,70 950,70" fill="#135028"/><polygon points="932,48 910,98 954,98" fill="#104020"/><polygon points="932,70 906,122 958,122" fill="#0d3c1c"/>
-
-      <!-- Pine: cx=900, top=20 -->
-      <rect x="896" y="98" width="8" height="162" fill="#2a1a0a"/>
-      <polygon points="900,20 880,68 920,68" fill="#145228"/><polygon points="900,44 876,96 924,96" fill="#104020"/><polygon points="900,68 872,122 928,122" fill="#0d3a1c"/>
-
-      <!-- Azaleas — right side -->
-      <ellipse cx="1170" cy="185" rx="28" ry="16" fill="#c24078" opacity="0.9"/>
-      <ellipse cx="1145" cy="178" rx="22" ry="14" fill="#d8508a" opacity="0.85"/>
-      <ellipse cx="1186" cy="192" rx="18" ry="12" fill="#b03068" opacity="0.8"/>
-      <ellipse cx="1128" cy="190" rx="20" ry="13" fill="#cc4880" opacity="0.85"/>
-
-      <ellipse cx="1090" cy="176" rx="26" ry="15" fill="#d45088" opacity="0.9"/>
-      <ellipse cx="1070" cy="182" rx="20" ry="12" fill="#c03870" opacity="0.85"/>
-      <ellipse cx="1105" cy="188" rx="16" ry="10" fill="#e06090" opacity="0.8"/>
-
-      <ellipse cx="1022" cy="188" rx="24" ry="14" fill="#c84480" opacity="0.9"/>
-      <ellipse cx="1040" cy="196" rx="18" ry="11" fill="#b83070" opacity="0.85"/>
-      <ellipse cx="1000" cy="180" rx="20" ry="13" fill="#d85090" opacity="0.8"/>
-
-      <ellipse cx="952" cy="182" rx="22" ry="13" fill="#cc4280" opacity="0.9"/>
-      <ellipse cx="930" cy="192" rx="18" ry="11" fill="#be3472" opacity="0.85"/>
-      <ellipse cx="972" cy="194" rx="16" ry="10" fill="#e06090" opacity="0.75"/>
-
-      <!-- Azalea highlights right -->
-      <ellipse cx="1148" cy="172" rx="12" ry="8" fill="#f080a8" opacity="0.7"/>
-      <ellipse cx="1072" cy="170" rx="14" ry="8" fill="#f07aa0" opacity="0.65"/>
-      <ellipse cx="1000" cy="175" rx="11" ry="7" fill="#f080a8" opacity="0.6"/>
-      <ellipse cx="932" cy="176" rx="13" ry="8" fill="#f07aa0" opacity="0.65"/>
-
-      <!-- ======= FAIRWAY (centre corridor) ======= -->
-      <!-- Rough base behind fairway -->
-      <path d="M308,260 Q380,155 470,142 Q530,135 600,136 Q670,135 730,142 Q820,155 892,260 Z" fill="url(#roughG)"/>
-
-      <!-- Fairway -->
-      <path d="M330,260 Q400,162 478,150 Q538,143 600,144 Q662,143 722,150 Q800,162 870,260 Z" fill="url(#fairwayG)"/>
-
-      <!-- Fairway mow stripes -->
-      <path d="M358,260 Q415,170 482,156 Q516,150 545,151 L556,260 Z" fill="url(#fairwayS)" opacity="0.35"/>
-      <path d="M430,260 Q472,172 510,159 Q535,154 558,155 L572,260 Z" fill="url(#fairwayS)" opacity="0.35"/>
-      <path d="M514,260 Q538,175 562,163 Q580,158 600,158 L614,260 Z" fill="url(#fairwayS)" opacity="0.35"/>
-      <path d="M598,260 Q612,175 634,163 Q650,158 668,160 L682,260 Z" fill="url(#fairwayS)" opacity="0.35"/>
-      <path d="M680,260 Q686,173 706,162 Q722,156 740,158 L756,260 Z" fill="url(#fairwayS)" opacity="0.35"/>
-      <path d="M758,260 Q760,172 776,161 Q792,156 810,159 L828,260 Z" fill="url(#fairwayS)" opacity="0.35"/>
-
-      <!-- Bunker left -->
-      <ellipse cx="458" cy="222" rx="42" ry="17" fill="url(#bunkerG)" opacity="0.92"/>
-      <ellipse cx="458" cy="220" rx="38" ry="13" fill="rgba(255,255,255,0.18)"/>
-
-      <!-- Bunker right -->
-      <ellipse cx="844" cy="218" rx="36" ry="14" fill="url(#bunkerG)" opacity="0.92"/>
-      <ellipse cx="844" cy="216" rx="32" ry="11" fill="rgba(255,255,255,0.18)"/>
-
-      <!-- Flag -->
-      <line x1="600" y1="148" x2="600" y2="116" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
-      <polygon points="600,116 620,122 600,128" fill="#cc1111"/>
-
-      <!-- Horizon glow -->
-      <rect x="300" y="136" width="600" height="12" fill="rgba(255,255,255,0.08)" filter="url(#sf1)"/>
-    </svg>
-
-    <div class="header-inner">
-      <h1>Norske Golfbaner</h1>
-      <p>Hold oversikt over banene du har spilt – legg til bilder, notater og rangeringer</p>
+  <div class="header-bar">
+    <div class="header-logo">
+      <!-- Flagged logo mark: flag on pole -->
+      <svg class="logo-flag-svg" viewBox="0 0 26 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="5" y1="2" x2="5" y2="28" stroke="#1a4a2e" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M5 3 L21 9.5 L5 16 Z" fill="#2d7a4f"/>
+      </svg>
+      <span class="logo-word">Flagged</span>
+      <span class="logo-tagline">course by course</span>
     </div>
     <div class="header-profile-btn" id="header-profile-btn" onclick="openProfileModal()" style="display:none">
       <div class="profile-avatar-sm" id="header-avatar"></div>
