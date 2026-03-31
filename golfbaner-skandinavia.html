@@ -2517,16 +2517,20 @@ function buildRegionSection(region) {
 
 function buildCourses() {
   const main = document.getElementById('main');
-  const feedView = document.getElementById('feed-view'); // preserve across innerHTML wipe
+  // Preserve non-golfliv views across innerHTML wipe
+  const feedView = document.getElementById('feed-view');
+  const newsView = document.getElementById('news-view');
   main.innerHTML = '<div id="summary-view"></div>';
   REGION_ORDER.filter(r => COURSES.some(c => c.region === r)).forEach(region => {
     main.appendChild(buildRegionSection(region));
   });
   if (feedView) main.appendChild(feedView);
-  // Hide golfliv content if feed tab is active
-  if (currentTab === 'feed') {
+  if (newsView) main.appendChild(newsView);
+  // Hide golfliv content if not on golfliv tab
+  if (currentTab !== 'golfliv') {
     Array.from(main.children).forEach(el => {
-      if (el.id !== 'feed-view') el.style.display = 'none';
+      if (el.id === 'feed-view' || el.id === 'news-view') return;
+      el.style.display = 'none';
     });
   }
 }
@@ -3362,9 +3366,11 @@ function switchTab(tab) {
 
   document.getElementById('stats-bar').style.display    = isGolfliv ? '' : 'none';
   document.getElementById('view-banner').style.display  = (isGolfliv && viewingProfileId) ? '' : 'none';
-  document.getElementById('feed-view').style.display    = isFeed  ? 'block' : 'none';
-  document.getElementById('news-view').style.display    = isNews  ? 'block' : 'none';
-  document.querySelector('.sidebar').style.display      = isGolfliv ? '' : 'none';
+  const feedViewEl = document.getElementById('feed-view');
+  const newsViewEl = document.getElementById('news-view');
+  if (feedViewEl) feedViewEl.style.display = isFeed ? 'block' : 'none';
+  if (newsViewEl) newsViewEl.style.display = isNews ? 'block' : 'none';
+  document.querySelector('.sidebar').style.display = isGolfliv ? '' : 'none';
 
   // Toggle golfliv main content
   const main = document.getElementById('main');
