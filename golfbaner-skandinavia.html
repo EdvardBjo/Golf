@@ -3668,7 +3668,7 @@ function switchTab(tab) {
   // Toggle golfliv main content
   const main = document.getElementById('main');
   Array.from(main.children).forEach(el => {
-    if (el.id === 'feed-view' || el.id === 'news-view') return;
+    if (el.id === 'feed-view' || el.id === 'news-view' || el.id === 'mobile-region-bar') return;
     el.style.display = isGolfliv ? '' : 'none';
   });
 
