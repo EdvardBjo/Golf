@@ -628,6 +628,169 @@
     .top-course-name { font-weight: 600; font-size: 0.9rem; color: var(--green-dark); flex: 1; }
     .top-course-score { font-size: 0.78rem; font-weight: 700; color: #b8860b; }
 
+    /* ===================== MOBILE RESPONSIVE ===================== */
+
+    /* Tablet — squeeze panels */
+    @media (max-width: 1100px) {
+      .sidebar        { width: 180px; }
+      .friends-panel  { width: 180px; }
+      .page-body      { gap: 16px; padding: 16px 16px 40px; }
+    }
+
+    /* Mobile — single column, hide side panels */
+    @media (max-width: 768px) {
+
+      /* Header — shorter */
+      .header-scene { height: 150px; }
+      .header-title { font-size: 1.5rem; }
+      .header-sub   { font-size: 0.72rem; }
+      .header-profile-btn { top: 10px; right: 10px; }
+
+      /* Nav tabs — touch-friendly, spread full width */
+      .main-nav-inner { padding: 0; }
+      .nav-tab {
+        flex: 1; justify-content: center;
+        padding: 13px 6px; font-size: 0.8rem; gap: 5px;
+      }
+      .nav-tab-icon { font-size: 0.95rem; }
+
+      /* Stats bar */
+      .stats-bar { padding: 6px 12px; }
+      .stat-number { font-size: 1.3rem; }
+      .stat-label  { font-size: 0.65rem; }
+      .stat { padding: 6px 16px; }
+      .stat-region-label { font-size: 0.7rem; }
+
+      /* View banner */
+      .view-banner-inner { padding: 0 12px; gap: 10px; }
+      .view-banner-back  { padding: 6px 12px; font-size: 0.8rem; }
+
+      /* Page layout — hide side panels, full-width main */
+      .page-body     { flex-direction: column; padding: 0 0 60px; gap: 0; }
+      .sidebar        { display: none !important; }
+      .friends-panel  { display: none !important; }
+      #main           { width: 100%; min-width: 0; }
+
+      /* Feed */
+      #feed-view      { padding: 12px 12px 20px; }
+      .feed-container { gap: 14px; }
+      .feed-create-bar { padding: 10px 12px; border-radius: 12px; }
+      .feed-create-prompt { font-size: 0.85rem; padding: 8px 12px; }
+      .feed-create-btn    { padding: 8px 14px; font-size: 0.82rem; }
+      .post-header  { padding: 12px 12px 8px; }
+      .post-caption { padding: 8px 12px 4px; font-size: 0.87rem; }
+      .post-actions { padding: 4px 8px 10px; }
+      .post-score-strip { padding: 8px 12px; }
+
+      /* News */
+      #news-view      { padding: 12px 12px 20px; }
+      .news-header-bar { margin-bottom: 14px; }
+      .news-card      { flex-direction: column; }
+      .news-thumb     { width: 100%; height: 180px; border-radius: 0; }
+      .news-thumb-placeholder { width: 100%; height: 80px; }
+      .news-body      { padding: 12px; }
+      .news-container { gap: 12px; }
+
+      /* Golfliv — summary */
+      #summary-view   { padding: 12px; }
+      .summary-heading { font-size: 1.3rem; }
+      .summary-grid   { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .summary-card   { padding: 12px 8px; }
+      .summary-card-value { font-size: 1.6rem; }
+      .summary-card-label { font-size: 0.68rem; }
+      .summary-card-sub   { font-size: 0.65rem; }
+
+      /* Top 3 favourites — single column */
+      .summary-top3-grid { grid-template-columns: 1fr; gap: 12px; }
+
+      /* Course grid — single column */
+      .courses-grid   { grid-template-columns: 1fr !important; gap: 10px; }
+
+      /* Course cards */
+      .card-photo, .card-photo-placeholder { height: 140px; }
+      .course-name  { font-size: 0.95rem; }
+
+      /* Region section headings */
+      .region-section { padding: 0 12px 20px; }
+      .region-heading { font-size: 1rem; padding: 10px 12px; margin: 0 -12px; }
+
+      /* Modals — bottom sheet style */
+      .modal-overlay { align-items: flex-end; padding: 0; }
+      .modal {
+        border-radius: 20px 20px 0 0;
+        max-height: 92vh; width: 100%;
+        margin: 0;
+      }
+      .modal-header { padding: 16px 16px 10px; }
+
+      /* New post modal — bottom sheet */
+      #new-post-overlay { align-items: flex-end; padding: 0; }
+      .new-post-modal {
+        border-radius: 20px 20px 0 0;
+        max-height: 92vh; width: 100%; max-width: 100%;
+      }
+
+      /* Profile setup */
+      .setup-card { padding: 28px 18px; border-radius: 16px; }
+      .setup-title { font-size: 1.3rem; }
+
+      /* Felles baner */
+      .felles-item    { gap: 10px; padding: 10px; }
+      .felles-thumb   { width: 52px; height: 52px; }
+      .felles-thumb-placeholder { width: 52px; height: 52px; }
+
+      /* Profile modal */
+      #profile-modal-overlay { align-items: flex-end; padding: 0; }
+      #profile-modal-overlay .modal {
+        border-radius: 20px 20px 0 0;
+        max-height: 95vh; width: 100%;
+      }
+    }
+
+    /* Mobile friends strip (horizontal scroll, Instagram Stories-style) */
+    .mobile-friends-bar {
+      display: none; /* hidden on desktop */
+      align-items: center; gap: 8px;
+      padding: 10px 12px 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+    }
+    .mobile-friends-bar::-webkit-scrollbar { display: none; }
+    .mobile-friends-label {
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--text-muted); flex-shrink: 0;
+    }
+    .mobile-friends-scroll { display: flex; gap: 10px; }
+    .mobile-friend-chip {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .mobile-friend-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--green-mid); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 800;
+      border: 2px solid var(--green-border); overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .mobile-friend-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .mobile-friend-chip:hover .mobile-friend-avatar { border-color: var(--green-mid); }
+    .mobile-friend-name {
+      font-size: 0.65rem; color: var(--text-muted);
+      max-width: 52px; text-align: center;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-friends-bar { display: flex; }
+    }
+
+    /* Small phones */
+    @media (max-width: 400px) {
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .nav-tab      { font-size: 0.72rem; padding: 12px 4px; }
+      .header-title { font-size: 1.25rem; }
+    }
+
     /* ===================== MAIN NAV TABS ===================== */
     .main-nav {
       background: white;
@@ -1547,6 +1710,11 @@
   </aside>
   <main id="main">
     <div id="feed-view">
+      <!-- Mobile-only friends bar -->
+      <div class="mobile-friends-bar" id="mobile-friends-bar">
+        <span class="mobile-friends-label">👥 Venner</span>
+        <div class="mobile-friends-scroll" id="mobile-friends-scroll"></div>
+      </div>
       <div class="feed-create-bar" onclick="openNewPostModal()">
         <div class="feed-create-avatar" id="feed-create-avatar"></div>
         <div class="feed-create-prompt">Hva spilte du i dag?</div>
@@ -3332,6 +3500,24 @@ function buildFeed() {
       : getInitials(profile);
   }
 
+  // Build mobile friends strip
+  const mobileScroll = document.getElementById('mobile-friends-scroll');
+  if (mobileScroll) {
+    const friendIds = getFriendIds();
+    const allProfiles = loadProfiles();
+    mobileScroll.innerHTML = friendIds.slice(0, 12).map(id => {
+      const p = allProfiles.find(pr => pr.id === id);
+      if (!p) return '';
+      const avatarInner = p.photo
+        ? `<img src="${p.photo}" alt="">`
+        : getInitials(p);
+      return `<div class="mobile-friend-chip" onclick="viewProfile('${p.id}');switchTab('golfliv')">
+        <div class="mobile-friend-avatar">${avatarInner}</div>
+        <div class="mobile-friend-name">${p.firstName || fullName(p)}</div>
+      </div>`;
+    }).join('');
+  }
+
   container.innerHTML = posts.length > 0
     ? posts.map(p => buildFeedPostHTML(p, profiles, activeId)).join('')
     : `<div style="text-align:center;padding:40px 20px;color:var(--text-muted)">
@@ -3370,7 +3556,10 @@ function switchTab(tab) {
   const newsViewEl = document.getElementById('news-view');
   if (feedViewEl) feedViewEl.style.display = isFeed ? 'block' : 'none';
   if (newsViewEl) newsViewEl.style.display = isNews ? 'block' : 'none';
-  document.querySelector('.sidebar').style.display = isGolfliv ? '' : 'none';
+  // Only show/hide sidebar on desktop — CSS handles mobile via media query
+  if (window.innerWidth > 768) {
+    document.querySelector('.sidebar').style.display = isGolfliv ? '' : 'none';
+  }
 
   // Toggle golfliv main content
   const main = document.getElementById('main');
