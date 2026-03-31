@@ -771,14 +771,11 @@
     .mobile-region-bar {
       display: none; /* shown via JS on mobile golfliv only */
       align-items: center;
-      padding: 8px 12px 6px;
+      padding: 7px 12px 7px;
       overflow-x: auto; -webkit-overflow-scrolling: touch;
       gap: 8px;
       background: #fff;
       border-bottom: 1px solid var(--green-border);
-      position: sticky;
-      top: 0;
-      z-index: 10;
       width: 100%;
       box-sizing: border-box;
     }
@@ -1664,6 +1661,8 @@
       </button>
     </div>
   </nav>
+  <!-- Mobile region picker — inside top-shell so it's always part of the sticky unit -->
+  <div class="mobile-region-bar" id="mobile-region-bar" style="display:none"></div>
 </div>
 
 <div class="stats-bar" id="stats-bar" style="display:none">
@@ -2688,26 +2687,16 @@ function buildCourses() {
   // Preserve non-golfliv views across innerHTML wipe
   const feedView = document.getElementById('feed-view');
   const newsView = document.getElementById('news-view');
-  const regionBar = document.getElementById('mobile-region-bar');
   main.innerHTML = '<div id="summary-view"></div>';
   REGION_ORDER.filter(r => COURSES.some(c => c.region === r)).forEach(region => {
     main.appendChild(buildRegionSection(region));
   });
   if (feedView) main.appendChild(feedView);
   if (newsView) main.appendChild(newsView);
-  // Re-append region bar after summary-view (insert before first region section)
-  if (regionBar) {
-    const summaryView = main.querySelector('#summary-view');
-    if (summaryView && summaryView.nextSibling) {
-      main.insertBefore(regionBar, summaryView.nextSibling);
-    } else {
-      main.appendChild(regionBar);
-    }
-  }
   // Hide golfliv content if not on golfliv tab
   if (currentTab !== 'golfliv') {
     Array.from(main.children).forEach(el => {
-      if (el.id === 'feed-view' || el.id === 'news-view' || el.id === 'mobile-region-bar') return;
+      if (el.id === 'feed-view' || el.id === 'news-view') return;
       el.style.display = 'none';
     });
   }
@@ -3145,11 +3134,11 @@ function buildMobileRegionBar() {
   const availableRegions = REGION_ORDER.filter(r => COURSES.some(c => c.region === r));
   bar.innerHTML = '';
 
-  // "Hjem" pill
-  const homePill = document.createElement('div');
-  homePill.className = 'mobile-region-pill' + (activeRegionSlug === null ? ' active' : '');
-  homePill.textContent = '🏠 Hjem';
-  homePill.onclick = () => {
+  // "Overview" pill — shows summary stats
+  const overviewPill = document.createElement('div');
+  overviewPill.className = 'mobile-region-pill' + (activeRegionSlug === null ? ' active' : '');
+  overviewPill.textContent = 'Overview';
+  overviewPill.onclick = () => {
     if (activeRegionSlug === null) return;
     activeRegionSlug = null;
     REGION_ORDER.forEach(r => {
@@ -3159,10 +3148,35 @@ function buildMobileRegionBar() {
     buildSummaryView();
     document.getElementById('summary-view').classList.add('visible');
     updateStats();
+    updateSidebarHomeBtn();
     buildMobileRegionBar();
   };
-  bar.appendChild(homePill);
+  bar.appendChild(overviewPill);
 
+  // "All Regions" pill — shows all course sections at once
+  const allPill = document.createElement('div');
+  allPill.className = 'mobile-region-pill' + (activeRegionSlug === 'all' ? ' active' : '');
+  allPill.textContent = 'All Regions';
+  allPill.onclick = () => {
+    if (activeRegionSlug === 'all') return;
+    activeRegionSlug = 'all';
+    document.getElementById('summary-view').classList.remove('visible');
+    REGION_ORDER.forEach(r => {
+      const s = document.getElementById('section-' + regionSlug(r));
+      const arrow = document.getElementById('arrow-' + regionSlug(r));
+      const items = document.getElementById('sidebar-region-' + regionSlug(r));
+      if (s) s.style.display = '';
+      if (arrow) arrow.textContent = '▼';
+      if (items) items.style.display = '';
+    });
+    updateStats();
+    updateSidebarHomeBtn();
+    buildMobileRegionBar();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  bar.appendChild(allPill);
+
+  // Individual region pills
   availableRegions.forEach(region => {
     const slug = regionSlug(region);
     const pill = document.createElement('div');
@@ -3622,7 +3636,7 @@ function switchTab(tab) {
   // Toggle golfliv main content
   const main = document.getElementById('main');
   Array.from(main.children).forEach(el => {
-    if (el.id === 'feed-view' || el.id === 'news-view' || el.id === 'mobile-region-bar') return;
+    if (el.id === 'feed-view' || el.id === 'news-view') return;
     el.style.display = isGolfliv ? '' : 'none';
   });
 
