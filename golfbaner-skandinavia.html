@@ -3311,8 +3311,7 @@ function startApp() {
   activeRegionSlug = regionSlug('Østlandet');
   updateStats('Østlandet');
 
-  // Start on feed tab
-  currentTab = 'feed'; // reset before switchTab call
+  // Start on feed tab (currentTab is still 'golfliv' from above, so switchTab will run fully)
   switchTab('feed');
 }
 
